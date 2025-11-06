@@ -6,21 +6,135 @@
   <title>Writing Teachers Comment Bank</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
   <style>
-    
+
   @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+
+:root {
+    /* Brand Colors - Purple Palette */
+    --primary-color: #6b2d8f;
+    --primary-dark: #4a1d65;
+    --primary-light: #8e44ad;
+    --primary-gradient: linear-gradient(135deg, #7b3fa0 0%, #5a2278 100%);
+
+    /* Neutral Colors */
+    --text-primary: #2d2d3a;
+    --text-secondary: #5a5a6e;
+    --text-tertiary: #8a8a9e;
+    --background-color: #f5f3f8;
+    --card-background: #ffffff;
+    --header-background: #ffffff;
+    --modal-background: #ffffff;
+    --input-background: #ffffff;
+
+    /* Accent Colors - Purple Tints */
+    --accent-purple-light: #a47bb8;
+    --accent-purple-lighter: #d4c4e0;
+    --accent-purple-lightest: #ebe5f2;
+
+    /* UI Elements */
+    --border-color: #e4e0eb;
+    --border-color-strong: #c8c0d6;
+    --card-border: 1px solid rgba(230, 225, 240, 0.8);
+
+    /* Spacing Scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* Typography */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* Shadows - Refined Elevation */
+    --shadow-sm: 0 2px 8px rgba(87, 6, 140, 0.08);
+    --shadow-md: 0 4px 16px rgba(87, 6, 140, 0.12);
+    --shadow-lg: 0 8px 24px rgba(87, 6, 140, 0.16);
+    --shadow-xl: 0 16px 48px rgba(87, 6, 140, 0.2);
+
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background-color: #f5f8fc;
+  padding: 10px 30px;
+  background-color: var(--header-background);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: background-color var(--transition-base);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-container {
+  height: 55px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo-container img {
+  height: 100%;
+  max-width: 240px;
+  object-fit: contain;
+}
+
+.header-title {
+  flex-grow: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.header-title h1 {
+  font-size: 1.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .logo {
   font-family: 'Shadows Into Light', cursive;
   font-size: 45px;
-  color: #333;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 nav ul {
@@ -35,8 +149,13 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
+  transition: color var(--transition-base);
+}
+
+nav ul li a:hover {
+  color: var(--primary-color);
 }
 
 .manage-data {
@@ -45,42 +164,138 @@ nav ul li a {
 }
 
 .clear-data {
-text-align: left;
-margin-bottom: 20px;
+  text-align: left;
+  margin-bottom: 20px;
 }
 
+/* Options Dropdown Styles */
+.options-dropdown {
+  position: relative;
+  display: inline-block;
+}
 
+.about-btn {
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-full);
+  padding: 10px 20px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.about-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.about-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.options-dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 5px);
+  background-color: var(--card-background);
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  z-index: 1000;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: background-color var(--transition-base);
+}
+
+.options-dropdown-menu.show {
+  display: block;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: var(--accent-purple-lightest);
+  color: var(--primary-color);
+}
+
+/* Legacy dropdown support */
 .dropdown {
   position: relative;
   display: inline-block;
-  border-radius: 25px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .manage-button {
-  font-size: 18px;
-  padding: 8px 16px;
-  background-color: hsl(4, 48%, 83%);
-  color: white;
-  border: none;
-  border-radius: 25px;
+  font-size: var(--font-size-base);
+  padding: 10px 20px;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
 }
 
 .manage-button:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.manage-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
-  border-radius: 25px;
-  min-width: 160px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  background-color: var(--card-background);
+  border-radius: var(--radius-md);
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  border: var(--card-border);
+  margin-top: 8px;
 }
 
 .dropdown:hover .dropdown-content {
@@ -88,34 +303,54 @@ margin-bottom: 20px;
 }
 
 .dropdown-content a {
-  color: black;
+  color: var(--text-primary);
   padding: 12px 16px;
   text-decoration: none;
-  border-radius: 25px;
   display: block;
+  transition: all var(--transition-base);
+  font-size: var(--font-size-sm);
+}
+
+.dropdown-content a:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.dropdown-content a:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  background-color: var(--accent-purple-lightest);
+  color: var(--primary-color);
 }
-
 
 body {
   font-family: 'Playfair Display', serif;
   margin: 0;
-  padding: 20px;
-  background-color: #f5f8fc;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
   font-family: 'Shadows Into Light', cursive;
   text-align: center;
   font-size: 65px;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 h2, h3, h4, h5, h6 {
   font-family: 'Shadows Into Light', cursive;
   text-align: center;
+  color: var(--primary-color);
 }
 
 input, button {
@@ -123,9 +358,9 @@ input, button {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--space-xl) var(--space-lg) 80px;
 }
 .add-comment-bank {
   display: flex;
@@ -136,38 +371,51 @@ input, button {
 .add-comment-bank .add-button {
   margin: 0;
   font-size: 24px;
-  padding: 10px 20px;
-  background-color: #c1dfef;
+  padding: 12px 28px;
+  background: var(--primary-gradient);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
 }
 
 #comments-list {
-  padding: 20px;
+  padding: 0;
+  margin: 0;
 }
 
-
 .add-comment-bank .add-button:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.add-comment-bank .add-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
 }
 
     .add-button {
-      font-size: 40px;
-      padding: 10px 20px;
-      background-color: #c1dfef;
+      font-size: 24px;
+      padding: 12px 28px;
+      background: var(--primary-gradient);
       color: white;
       border: none;
-      border-radius: 25px;
+      border-radius: var(--radius-full);
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.3s ease;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
     }
     .add-button:hover {
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .add-button:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-md);
     }
 
     .clear-data {
@@ -176,14 +424,19 @@ input, button {
     }
 
     .clear-button:hover {
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .clear-button:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
     }
 
     .comment-banks {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-gap: 20px;
-  margin-top: 20px;
+  grid-gap: var(--space-lg);
+  margin-top: var(--space-xl);
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
@@ -191,15 +444,17 @@ input, button {
 
 .comment-bank-link {
   display: block;
-  padding: 15px;
+  padding: var(--space-lg);
   text-align: center;
-  background-color: white;
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: all var(--transition-base);
   text-decoration: none;
-  color: #333;
+  color: var(--text-primary);
+  border: var(--card-border);
+  font-weight: 500;
 }
 
 .download-option {
@@ -212,21 +467,22 @@ input, button {
 }
 
     .comment-bank {
-      border: 1px solid #ccc;
-      padding: 20px;
+      border: var(--card-border);
+      padding: var(--space-lg);
       text-align: center;
-      background-color: white;
-      border-radius: 25px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: var(--card-background);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
     }
     .comment-bank-link:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
 
 .no-comment-banks {
   text-align: center;
   font-style: italic;
-  color: #777;
+  color: var(--text-tertiary);
 }
 
     .clear-data {
@@ -235,17 +491,18 @@ input, button {
 }
 
 .clear-button {
-  font-size: 18px;
-  padding: 8px 16px;
+  font-size: var(--font-size-base);
+  padding: 10px 20px;
   margin-top: 10px;
   text-align: center;
-  background-color: hsl(4, 48%, 83%);;
-  color: white;
-  border: none;
-  border-radius: 25px;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
 }
 
 .overlay {
@@ -257,23 +514,58 @@ input, button {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+  backdrop-filter: blur(4px);
 }
 
 .clear-button:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.clear-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .popup-buttons {
-  margin-top: 20px;
+  margin-top: var(--space-lg);
 }
 
 .popup-buttons button {
-  font-size: 16px;
-  padding: 8px 16px;
-  margin: 0 10px;
+  font-size: var(--font-size-base);
+  padding: 10px 24px;
+  margin: 0 var(--space-sm);
   border: none;
-  border-radius: 25px;
+  border-radius: var(--radius-full);
   cursor: pointer;
+  font-weight: 600;
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.popup-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.popup-buttons button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.popup-buttons button:last-child {
+  background: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.popup-buttons button:last-child:hover {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .popup {
@@ -282,23 +574,34 @@ input, button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--modal-background);
+  padding: var(--space-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
   text-align: center;
   z-index: 1000;
-  width: 80%; /* Add this line to set the width of the popup */
-  max-width: 600px; /* Add this line to set a maximum width for the popup */
+  width: 80%;
+  max-width: 600px;
+  border: var(--card-border);
 }
 
 .popup input {
-  font-size: 18px;
-  padding: 10px;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  margin-bottom: 20px;
+  font-size: var(--font-size-lg);
+  padding: 12px 16px;
+  width: 100%;
+  max-width: 400px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  background-color: var(--input-background);
+  color: var(--text-primary);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.popup input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(107, 45, 143, 0.1);
 }
 
 .popup-buttons {
@@ -314,59 +617,209 @@ input, button {
   cursor: pointer;
 }
 
+#landing-container {
+  margin: 0 auto;
+  padding: var(--space-xl) 0;
+  max-width: 900px;
+}
+
 .comment-container {
   display: none;
-  margin: 40px auto;
-  max-width: 800px;
-  padding: 20px;
-  background-color: #f5f8fc;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
 }
 
+/* Sticky Header Wrapper */
+.comment-header-wrapper {
+  position: sticky;
+  top: 75px;
+  z-index: 90;
+  background: var(--header-background);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Action Toolbar */
 .comment-actions {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  padding: var(--space-md) 30px;
+  background: var(--header-background);
+  border-bottom: 1px solid var(--border-color);
+  margin: 0;
+  gap: var(--space-md);
+}
+
+.comment-actions-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.comment-actions-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 .comment-actions button {
-  font-size: 14px;
-  padding: 6px 12px;
-  margin-left: 10px;
-  background-color: #c1dfef;
-  color: #333;
+  font-size: var(--font-size-sm);
+  padding: 8px 16px;
   border: none;
-  border-radius: 25px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: all var(--transition-base);
+  white-space: nowrap;
 }
 
-.comment-actions button:hover {
-  background-color: #a1c9e1;
+/* Primary Action Button */
+.btn-primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-sm);
 }
 
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary Action Buttons */
+.btn-secondary {
+  background: var(--accent-purple-lightest);
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--accent-purple-lighter);
+  border-color: var(--primary-color);
+}
+
+/* Icon-style buttons */
+.btn-icon {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+}
+
+.btn-icon:hover {
+  background: var(--accent-purple-lightest);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Comments List Container */
+.comments-list-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+/* Individual Comment Card */
 .comment {
-  border: 1px solid #868282;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: white;
+  position: relative;
+  border: var(--card-border);
+  padding: 0;
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-background);
+  transition: all var(--transition-base);
+  overflow: visible;
+  box-shadow: 0 2px 8px rgba(107, 45, 143, 0.06);
 }
 
-.comment-actions {
-  text-align: right;
-  margin-top: 10px;
+.comment:hover {
+  box-shadow: 0 6px 20px rgba(107, 45, 143, 0.12);
+  transform: translateY(-2px);
 }
 
-.comment-actions button {
-  margin-left: 10px;
+/* Comment has a colored left border accent */
+.comment::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--comment-accent-color, var(--primary-color));
+  transition: width var(--transition-base);
 }
 
-.comment-actions {
+.comment:hover::before {
+  width: 6px;
+}
+
+/* Comment Header with checkbox and color tag */
+.comment-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  gap: var(--space-sm);
+  padding: 6px var(--space-md);
+  background: var(--accent-purple-lightest);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* Comment Body */
+.comment-body {
+  padding: var(--space-md);
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.comment-text {
+  flex: 1;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Comment Footer with actions */
+.comment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(107, 45, 143, 0.02);
+  border-top: 1px solid var(--border-color);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: visible;
+}
+
+.comment-actions-inline {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.comment-actions-inline button {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-weight: 500;
+}
+
+.comment-actions-inline button:hover {
+  background: var(--card-background);
+  border-color: var(--border-color);
+  color: var(--primary-color);
 }
 
 .add-button {
@@ -386,139 +839,549 @@ input, button {
 }
 
 .home-button {
-  font-size: 18px;
+  font-size: var(--font-size-base);
   padding: 10px 20px;
-  margin-left: 20px;
-  background-color: #c1dfef;
-  color: white;
-  border: none;
-  border-radius: 25px;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
 }
 
 .home-button:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.home-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 #assignment-heading {
   font-size: 48px;
-  margin-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: var(--space-xl);
   font-family: 'Shadows Into Light', cursive;
-  color: #333;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-align: center;
+  font-weight: 700;
 }
 
 #add-comment-popup textarea {
   width: 100%;
+  max-width: 100%;
   height: 150px;
   resize: vertical;
-  margin-bottom: 10px;
-  margin-left: -10px;
-  padding: 10px;
-  font-size: 16px;
+  margin-bottom: var(--space-md);
+  padding: 12px 16px;
+  font-size: var(--font-size-base);
   font-family: 'Playfair Display', serif;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-background);
+  color: var(--text-primary);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
+#add-comment-popup textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(107, 45, 143, 0.1);
+}
+
+/* Enhanced Checkbox */
 .comment-checkbox {
-  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+/* Tag System */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 2px solid;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  transition: all var(--transition-fast);
+}
+
+.tag-removable {
+  cursor: pointer;
+}
+
+.tag-removable:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.tag-remove {
+  margin-left: 2px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: center;
 }
 
 .copy-selected-button {
-  font-size: 18px;
+  font-size: var(--font-size-base);
   padding: 10px 20px;
-  margin-left: 20px;
-  background-color: #c1dfef;
+  background: var(--primary-gradient);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
 }
 
 .copy-selected-button:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.color-bubbles {
-  display: inline-flex;
-  margin-left: 10px;
+.copy-selected-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
-.color-bubble {
-  width: 20px;
-  height: 20px;
-  border: 1px solid black;
-  border-radius: 50%;
-  margin-right: 5px;
+/* Tag Picker Dropdown */
+.tag-picker {
+  position: relative;
+  display: inline-block;
+}
+
+.tag-picker-toggle {
+  padding: 4px 10px;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
 }
 
-.comment-content {
+.tag-picker-toggle:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.tag-picker-menu {
+  position: absolute;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+  min-width: 200px;
+  width: max-content;
+  max-width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tag-picker-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tag-picker-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tag-picker-menu::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.tag-picker-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+.tag-option {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+  border: 2px solid transparent;
 }
 
-.arrow-buttons {
+.tag-option:hover {
+  background: var(--accent-purple-lightest);
+}
+
+.tag-option.selected {
+  border-color: var(--primary-color);
+  background: var(--accent-purple-lightest);
+}
+
+.tag-option-checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tag-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px var(--border-color);
+  flex-shrink: 0;
+}
+
+.tag-option-name {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Tag Management Modal */
+.tag-manager {
+  max-width: 600px;
+}
+
+.tag-list {
+  margin: var(--space-lg) 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tag-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+  background: var(--card-background);
+}
+
+.tag-list-item .tag {
+  margin: 0;
+}
+
+.tag-list-actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.tag-list-actions button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag-form {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--accent-purple-lightest);
+  border-radius: var(--radius-md);
+  align-items: flex-end;
+}
+
+.tag-form-group {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-left: 10px;
+  gap: 4px;
 }
 
-.arrow-button {
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
-  border: 1px solid #000000;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+.tag-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tag-form-group input {
+  padding: 8px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.tag-form-group input[type="color"] {
+  height: 40px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  padding: 2px;
 }
 
-.arrow-button:hover {
-  background-color: #a1c9e1;
+.tag-form button {
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+/* Tag Filter Bar */
+.tag-filter-bar {
+  padding: var(--space-sm) 30px var(--space-md) 30px;
+  background: var(--header-background);
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.tag-filter-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.tag-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.tag-filter {
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 2px solid;
+  transition: all var(--transition-base);
+  opacity: 0.7;
+  position: relative;
+}
+
+.tag-filter:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.tag-filter.active {
+  opacity: 1;
+  box-shadow: var(--shadow-md);
+  transform: scale(1.05);
+}
+
+.tag-filter.active::after {
+  content: '✓';
+  margin-left: 6px;
+  font-weight: bold;
+}
+
+.clear-filters-btn {
+  padding: 6px 14px;
+  background: var(--text-tertiary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.clear-filters-btn:hover {
+  background: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+.filter-count {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin-left: auto;
+}
+
+/* Reorder Buttons */
+.reorder-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.reorder-btn {
+  background: transparent;
+  color: var(--text-tertiary);
+  border: none;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reorder-btn:hover {
+  color: var(--primary-color);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-xl);
+  color: var(--text-tertiary);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-lg);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header {
+    padding: 12px 16px;
+  }
+
+  .header-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .logo-container {
+    height: 60px;
+  }
+
+  .header-buttons {
+    gap: 10px;
+  }
+
+  .about-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .options-dropdown-menu {
+    right: 0;
+    min-width: 160px;
+  }
+
+  .comment-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .comment-actions-left,
+  .comment-actions-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .comments-list-wrapper {
+    padding: var(--space-md);
+  }
+
+  .comment-header {
+    flex-wrap: wrap;
+  }
+
+  .comment-footer {
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-title h1 {
+    font-size: 1.2rem;
+  }
+
+  .logo-container {
+    height: 50px;
+  }
+
+  #assignment-heading {
+    font-size: 1.2rem !important;
+  }
 }
 
 </style>
 </head>
 <body>
-  <header>
-    <div class="logo">Say more here</div>
-    <nav>
-      <ul>
-        <li><a href="#">About</a></li>
-        <li>
-          <div class="dropdown">
-            <button class="manage-button">Manage Data</button>
-            <div class="dropdown-content">
-              <a href="#" onclick="uploadCommentBank()">Upload Comment Bank</a>
-              <a href="#" onclick="downloadCommentBank()">Download Comment Bank</a>
-              <a href="#" onclick="deleteCommentBanks()">Delete Comment Bank(s)</a>
-              <a href="#" onclick="showClearDataPopup()">Reset All</a>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </nav>
+  <header class="header">
+    <div class="logo-container">
+      <img src="https://i.imgur.com/iIODsNl.png" alt="Logo" class="logo-img" id="headerLogo">
+    </div>
+    <div class="header-title">
+      <h1>Say More Here</h1>
+    </div>
+    <div class="header-buttons">
+      <!-- Options Dropdown -->
+      <div class="options-dropdown">
+        <button class="about-btn" id="optionsDropdownBtn" onclick="toggleOptionsDropdown()">
+          Options ∨
+        </button>
+        <div class="options-dropdown-menu" id="optionsDropdownMenu">
+          <button class="dropdown-item" onclick="showAbout()">About</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); uploadCommentBank()">Upload Comment Bank</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); downloadCommentBank()">Download Comment Bank</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); deleteCommentBanks()">Delete Comment Bank(s)</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); showClearDataPopup()">Reset All Data</button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div id="overlay" class="overlay" onclick="hideAllPopups()"></div>
 
-   
+  <div class="container">
 
-     
       <div id="delete-popup" class="popup">
         <h2>Select Comment Banks to Delete</h2>
         <div id="delete-checkboxes"></div>
@@ -560,7 +1423,7 @@ input, button {
        
         <div id="comment-bank-list" class="comment-banks">
             <div class="add-comment-bank">
-              <button class="add-button" onclick="showPopup()">+ Add a comment bank</button>
+              <button class="add-button" onclick="showPopup()">+ Add Comment Bank</button>
             </div>
           </div>
           <p class="no-comment-banks" id="no-comment-banks-message">No comment banks created yet.</p>
@@ -580,14 +1443,28 @@ input, button {
     <input type="text" id="assignment-name" placeholder="Example: Op-ed Fall 2024">
   </div>
 
-  <div id="comment-container" class="comment-container">
-    <h2 id="assignment-heading"></h2>
-    <div class="comment-actions">
-        <button class="add-button" onclick="addComment()">+ Add Comment</button>
-        <button class="home-button" onclick="goToHome()">Home</button>
-        <button class="copy-selected-button" onclick="copySelectedComments()">Copy Selected</button>
+  <!-- Tag Management Modal -->
+  <div id="tag-manager-popup" class="popup tag-manager">
+    <h2>Manage Tags</h2>
+    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">Create custom tags to organize your comments. You can apply multiple tags to each comment.</p>
+
+    <div class="tag-list" id="tag-list"></div>
+
+    <div class="tag-form">
+      <div class="tag-form-group">
+        <label>Tag Name</label>
+        <input type="text" id="new-tag-name" placeholder="e.g., Thesis, Evidence, Style">
       </div>
-    <div id="comments-list"></div>
+      <div class="tag-form-group" style="max-width: 100px;">
+        <label>Color</label>
+        <input type="color" id="new-tag-color" value="#6b2d8f">
+      </div>
+      <button class="btn-primary" onclick="addNewTag()">+ Add Tag</button>
+    </div>
+
+    <div class="popup-buttons">
+      <button onclick="hideTagManager()">Done</button>
+    </div>
   </div>
 
   <div id="add-comment-popup" class="popup">
@@ -599,10 +1476,48 @@ input, button {
     </div>
   </div>
 
-  
+  </div> <!-- End container -->
+
+  <!-- Comment Bank Container (Full Width) -->
+  <div id="comment-container" class="comment-container">
+    <!-- Sticky Header Wrapper -->
+    <div class="comment-header-wrapper">
+      <!-- Action Toolbar -->
+      <div class="comment-actions">
+        <div class="comment-actions-left">
+          <button class="btn-icon" onclick="goToHome()" title="Back to Home">← Back</button>
+          <h2 id="assignment-heading" style="margin: 0; font-size: 1.25rem;"></h2>
+        </div>
+        <div class="comment-actions-right">
+          <button class="btn-secondary" onclick="showTagManager()">🏷️ Manage Tags</button>
+          <button class="btn-secondary" onclick="copySelectedComments()">📋 Copy Selected</button>
+          <button class="btn-primary" onclick="addComment()">+ Add Comment</button>
+        </div>
+      </div>
+
+      <!-- Tag Filter Bar -->
+      <div class="tag-filter-bar" id="tag-filter-bar">
+        <span class="tag-filter-label">Filter by:</span>
+        <div class="tag-filters" id="tag-filters"></div>
+        <button class="clear-filters-btn" onclick="clearTagFilters()" id="clear-filters-btn" style="display: none;">Clear Filters</button>
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comments-list-wrapper">
+      <div id="comments-list"></div>
+    </div>
+  </div>
+
+  <!-- Global Tag Picker Dropdown (shared by all comments) -->
+  <div id="global-tag-picker" class="tag-picker-menu" style="display: none;"></div>
 
   <script>
 let commentBanks = [];
+let currentCommentBankIndex = -1; // Track which comment bank is currently open
+let activeTagFilters = []; // Track which tags are being filtered
+let selectedComments = new Set(); // Track which comments are checked
 
 function uploadCommentBank() {
   // Implement the logic to upload a comment bank
@@ -612,6 +1527,10 @@ function uploadCommentBank() {
 function goToHome() {
   document.getElementById('comment-container').style.display = 'none';
   document.getElementById('landing-container').style.display = 'block';
+  document.querySelector('.container').style.display = 'block';
+  // Clear the URL hash
+  history.pushState(null, '', window.location.pathname);
+  currentCommentBankIndex = -1;
 }
 
 
@@ -637,8 +1556,22 @@ function deleteCommentBanks() {
 }
 
 function deleteComment(index) {
-  const currentCommentBank = commentBanks[commentBanks.length - 1];
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
   currentCommentBank.comments.splice(index, 1);
+
+  // Update selectedComments: remove deleted index and shift down all higher indices
+  const newSelectedComments = new Set();
+  selectedComments.forEach(selectedIndex => {
+    if (selectedIndex < index) {
+      newSelectedComments.add(selectedIndex);
+    } else if (selectedIndex > index) {
+      newSelectedComments.add(selectedIndex - 1);
+    }
+    // If selectedIndex === index, don't add it (it's been deleted)
+  });
+  selectedComments = newSelectedComments;
+
   saveData();
   displayComments(currentCommentBank.comments);
 }
@@ -711,7 +1644,8 @@ function handleEnterKey() {
   const assignmentName = document.getElementById('assignment-name').value;
   const newCommentBank = {
     assignmentName: assignmentName,
-    comments: []
+    comments: [],
+    tags: getDefaultTags() // Initialize with default tags
   };
   commentBanks.push(newCommentBank);
   saveData();
@@ -722,25 +1656,50 @@ function handleEnterKey() {
   openCommentBank(commentBanks.length - 1);
 }
 
+// Default tags for new comment banks
+function getDefaultTags() {
+  return [
+    { id: generateId(), name: 'Evidence', color: '#3498DB' },
+    { id: generateId(), name: 'Organization', color: '#2ECC71' },
+    { id: generateId(), name: 'Intro', color: '#9B59B6' },
+    { id: generateId(), name: 'Conclusion', color: '#8E44AD' },
+    { id: generateId(), name: 'Voice', color: '#E74C3C' },
+    { id: generateId(), name: 'Praise', color: '#FFD700' },
+    { id: generateId(), name: 'Critical', color: '#E67E22' },
+    { id: generateId(), name: 'Salutation', color: '#1ABC9C' },
+    { id: generateId(), name: 'Valediction', color: '#16A085' },
+    { id: generateId(), name: 'Stakes', color: '#C0392B' },
+    { id: generateId(), name: 'Problem', color: '#D35400' },
+    { id: generateId(), name: 'Ethos', color: '#34495E' },
+    { id: generateId(), name: 'Sayback', color: '#27AE60' }
+  ];
+}
+
+// Generate unique IDs for tags
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
 function addComment() {
     showAddCommentPopup();
 }
 
 function editComment(button, index) {
-  const commentElement = button.parentNode.parentNode;
-  const commentText = commentElement.querySelector('p').textContent;
+  const commentElement = button.closest('.comment');
+  const commentText = commentElement.querySelector('.comment-text').textContent;
   document.getElementById('comment-text').value = commentText;
   document.getElementById('add-comment-popup').setAttribute('data-index', index);
   showAddCommentPopup();
 }
 
 function copyComment(button) {
-  const commentElement = button.parentNode.parentNode;
-  const commentText = commentElement.querySelector('p').textContent;
+  const commentElement = button.closest('.comment');
+  const commentText = commentElement.querySelector('.comment-text').textContent;
   navigator.clipboard.writeText(commentText.trim()).then(function() {
-    button.textContent = 'Copied!';
+    const originalText = button.innerHTML;
+    button.innerHTML = '✅ Copied!';
     setTimeout(function() {
-      button.textContent = 'Copy';
+      button.innerHTML = originalText;
     }, 2000);
   }, function(err) {
     console.error('Could not copy text: ', err);
@@ -748,11 +1707,20 @@ function copyComment(button) {
 }
 
 function copySelectedComments() {
-  const selectedComments = Array.from(document.querySelectorAll('.comment-checkbox:checked'))
-    .map(checkbox => checkbox.parentNode.querySelector('p').textContent.trim());
+  if (currentCommentBankIndex === -1) return;
 
-  if (selectedComments.length > 0) {
-    const commentsWithLineBreaks = selectedComments.join('\n\n');
+  if (selectedComments.size === 0) {
+    alert('No comments selected!');
+    return;
+  }
+
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
+  const selectedTexts = Array.from(selectedComments)
+    .map(index => currentCommentBank.comments[index].text)
+    .filter(text => text); // Filter out any undefined
+
+  if (selectedTexts.length > 0) {
+    const commentsWithLineBreaks = selectedTexts.join('\n\n');
     navigator.clipboard.writeText(commentsWithLineBreaks).then(function() {
       alert('Selected comments copied to clipboard!');
     }, function(err) {
@@ -767,11 +1735,108 @@ function saveData() {
   localStorage.setItem('commentBankData', JSON.stringify(commentBanks));
 }
 
+function getPreloadedCommentBanks() {
+  const tags = [
+    { id: generateId(), name: 'Intro', color: '#9b59b6' },
+    { id: generateId(), name: 'Evidence', color: '#3498db' },
+    { id: generateId(), name: 'Organization', color: '#2ecc71' },
+    { id: generateId(), name: 'Stakes', color: '#c0392b' },
+    { id: generateId(), name: 'Ethos', color: '#34495e' },
+    { id: generateId(), name: 'Voice', color: '#e74c3c' },
+    { id: generateId(), name: 'Conclusion', color: '#8e44ad' },
+    { id: generateId(), name: 'Praise', color: '#ffd700' },
+    { id: generateId(), name: 'Critical', color: '#e67e22' }
+  ];
+
+  const opEdComments = [
+    { text: "I enjoyed reading this latest version of your op-ed. This new draft features a more direct approach and clearer articulation of your main point.", tags: [tags[0].id, tags[7].id] },
+    { text: "Your opening paragraphs do a great job establishing the status quo perspective that your essay will challenge. This context allows your own claim to appear relevant and surprising.", tags: [tags[0].id, tags[7].id] },
+    { text: "Your essay gets off to a strong start, clearly stating the problem and establishing why readers should care about this issue.", tags: [tags[0].id, tags[3].id, tags[7].id] },
+    { text: "However, it's not until the third paragraph that your op-ed really gets interesting. An editor interested in your essay would almost certainly ask you to begin the essay here, where you reveal your relationship to this topic.", tags: [tags[0].id, tags[2].id] },
+    { text: "Your essay doesn't yet describe your own relationship to this issue. Readers will need help understanding how your positionality lends you special insights into this topic.", tags: [tags[4].id] },
+    { text: "Your essay lacks adequate evidence of the problem. The examples provided aren't enough to demonstrate that this problem exists. Can you find more—and more authoritative—data?", tags: [tags[1].id] },
+    { text: "Though your essay offers concrete examples, they're not enough to support sweeping generalizations. Readers might wonder if other factors could explain these differences.", tags: [tags[1].id, tags[5].id] },
+    { text: "Your essay overly relies on speculation and unsupported generalizations. An editor will likely encourage you to bolster your argument with clearer, stronger evidence.", tags: [tags[1].id] },
+    { text: "Your paragraph about [specific example] nicely illustrates your point and provides the kind of concrete detail that makes your argument persuasive.", tags: [tags[1].id, tags[5].id, tags[7].id] },
+    { text: "Your essay mentions a study but doesn't explain the methods or results of this research. Without more context, it's not clear how this study supports your claim.", tags: [tags[1].id] },
+    { text: "Unless you're an educational researcher, it will be difficult to support these kinds of general claims. Your expertise here comes from your experience as a student. Therefore, the strongest version of your essay will focus on your own personal experiences, habits, and impressions—a case study of one, conducted by yourself on yourself.", tags: [tags[1].id, tags[4].id] },
+    { text: "This could feel more concrete if your essay included the voices of students/people who experience this issue. An editor interested in your op-ed would likely encourage you to find quotes from these individuals.", tags: [tags[1].id, tags[5].id] },
+    { text: "Though I agree with your conclusion, I worry that your evidence might strike readers as weak or insignificant. These kinds of grievances might seem petty to some readers, and make the issue seem less significant than it really is.", tags: [tags[1].id, tags[3].id] },
+    { text: "Your essay demonstrates a solid understanding of the form and function of op-eds, and your draft features strong evidence to support your claims.", tags: [tags[1].id, tags[7].id] },
+    { text: "The organization and structure aren't yet optimized for readers' comprehension and engagement. As a reader, I wished the essay could state your opinion more strongly and directly in the opening paragraphs.", tags: [tags[2].id] },
+    { text: "This newest draft features a streamlined structure that will help readers understand the focus and purpose of your op-ed more quickly and easily.", tags: [tags[2].id, tags[7].id] },
+    { text: "You've got all or most of the ingredients of a great op-ed, though they're not yet arranged in the most helpful order.", tags: [tags[2].id] },
+    { text: "An editor interested in your op-ed would likely encourage you to establish clearer stakes. Why does this matter? Perhaps there's room to reflect on the significance of this issue.", tags: [tags[3].id] },
+    { text: "Your essay does a great job at establishing the stakes of your argument. It's a big claim, but I suspect most readers will go along with it.", tags: [tags[3].id, tags[7].id] },
+    { text: "It's not yet clear what you want your readers to *do* with this information. An editor would likely ask you to reflect on the implications of these differences. How should we think or behave differently once we understand the situation?", tags: [tags[3].id] },
+    { text: "What do your classmates' opinions about this issue suggest about their attitudes toward [broader topic]? Help us understand the full significance of this issue.", tags: [tags[3].id] },
+    { text: "After all, many thousands of students could make the same claim to authority. You'll need to make a stronger claim to authority—or choose another topic more directly related to your own lived experience—in order to catch an editor's eye.", tags: [tags[4].id] },
+    { text: "You explain the situation clearly when you suggest that [specific comparison]. This was a striking and well-evidenced perspective that demonstrates your unique insight.", tags: [tags[4].id, tags[7].id] },
+    { text: "My favorite moments are the ones that describe specific activities and concrete details. But these moments play too small a role. Readers will be hungry for a clearer, more detailed picture of the experience you're describing.", tags: [tags[5].id] },
+    { text: "A strong op-ed might fill this gap with anecdotes, scenes, or dialog that shows us (rather than tells us) what you're describing.", tags: [tags[5].id] },
+    { text: "The example presented in this paragraph felt wonderfully concrete—a great illustration of your point.", tags: [tags[5].id, tags[7].id] },
+    { text: "Readers' favorite moments in the essay will probably be those that are most specific and most personal.", tags: [tags[5].id, tags[4].id] },
+    { text: "I worry that the ending might strike readers as underwhelming, sentimental, or even a bit cheesy. Try ending the essay on a more serious note, rather than a falsely inspiring one.", tags: [tags[6].id] },
+    { text: "However, your conclusion doesn't clearly follow from the previous paragraphs. How are these ideas related?", tags: [tags[6].id] },
+    { text: "The end of your essay explains—though perhaps not explicitly enough—that you're not suggesting we return to the stone age. You're advocating for a thoughtful middle ground.", tags: [tags[6].id, tags[7].id] },
+    { text: "All in all, your essay demonstrates a solid understanding of the form and function of op-eds, and your draft probably requires the kind of light-to-moderate edits, for polish and concision, typical of accepted drafts. I suspect the right editor at the right newspaper would be happy to find this in their inbox.", tags: [tags[7].id] },
+    { text: "All in all, your essay demonstrates a generally solid understanding of the form and function of op-eds, though you'll need [specific improvement] to catch an editor's eye.", tags: [] },
+    { text: "All in all, your essay demonstrates a basic understanding of the form and function of op-eds, though your draft will need stronger, clearer evidence in order to catch an editor's eye.", tags: [tags[1].id] },
+    { text: "Your essay demonstrates a firm understanding of the form and function of op-eds. Though it's strictly optional at this point, I encourage you to keep working on this and submit it to a newspaper. It would be great to see your ideas in print.", tags: [tags[7].id] }
+  ];
+
+  return [{
+    assignmentName: "Op-Ed Feedback Bank",
+    tags: tags,
+    comments: opEdComments
+  }];
+}
+
 function loadData() {
   const data = JSON.parse(localStorage.getItem('commentBankData'));
   if (data) {
     commentBanks = data;
+    // Ensure backwards compatibility - add tags to old comment banks
+    commentBanks.forEach(bank => {
+      if (!bank.tags) {
+        bank.tags = getDefaultTags();
+      }
+      // Migrate old color-based tags to new system
+      if (bank.comments) {
+        bank.comments.forEach(comment => {
+          if (!comment.tags && comment.color) {
+            comment.tags = [];
+            // Don't auto-migrate colors to maintain data integrity
+          }
+          if (!comment.tags) {
+            comment.tags = [];
+          }
+        });
+      }
+    });
+    saveData(); // Save migrated data
     updateCommentBankList();
+  } else {
+    // Load preloaded comment bank on first use
+    commentBanks = getPreloadedCommentBanks();
+    saveData();
+    updateCommentBankList();
+  }
+
+  // Check if there's a hash in the URL and open the corresponding bank
+  loadCommentBankFromURL();
+}
+
+// Load comment bank based on URL hash
+function loadCommentBankFromURL() {
+  const hash = window.location.hash.substring(1); // Remove the '#'
+  if (hash) {
+    // Find the comment bank with matching slug
+    const index = commentBanks.findIndex(bank => slugify(bank.assignmentName) === hash);
+    if (index !== -1) {
+      // Don't update history when loading from URL on page load
+      openCommentBank(index, false);
+    }
   }
 }
 
@@ -787,7 +1852,7 @@ function updateCommentBankList() {
   const noCommentBanksMessage = document.getElementById('no-comment-banks-message');
   commentBankList.innerHTML = `
     <div class="add-comment-bank">
-      <button class="add-button" onclick="showPopup()">+ Add a Comment Bank</button>
+      <button class="add-button" onclick="showPopup()">+ Add Comment Bank</button>
     </div>
   `;
   if (commentBanks.length === 0) {
@@ -804,55 +1869,413 @@ function updateCommentBankList() {
   }
 }
 
-function openCommentBank(index) {
+// Convert comment bank name to URL-friendly slug
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')      // Replace spaces with hyphens
+    .replace(/--+/g, '-')      // Replace multiple hyphens with single hyphen
+    .trim();
+}
+
+function openCommentBank(index, updateHistory = true) {
+  currentCommentBankIndex = index; // Set the current comment bank
+  activeTagFilters = []; // Reset filters when opening a comment bank
+  selectedComments.clear(); // Clear selected comments when switching banks
   const commentBank = commentBanks[index];
   document.getElementById('assignment-heading').textContent = commentBank.assignmentName;
+  displayTagFilterBar();
   displayComments(commentBank.comments);
   document.getElementById('landing-container').style.display = 'none';
+  document.querySelector('.container').style.display = 'none';
   document.getElementById('comment-container').style.display = 'block';
+  window.scrollTo(0, 0); // Scroll to top to show comment bank immediately below header
+
+  // Update URL with comment bank name (only if updateHistory is true)
+  if (updateHistory) {
+    const slug = slugify(commentBank.assignmentName);
+    history.pushState({ commentBankIndex: index }, '', '#' + slug);
+  }
+}
+
+// Display Tag Filter Bar
+function displayTagFilterBar() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagFiltersContainer = document.getElementById('tag-filters');
+
+  if (!commentBank.tags) {
+    commentBank.tags = getDefaultTags();
+  }
+
+  if (commentBank.tags.length === 0) {
+    tagFiltersContainer.innerHTML = '<span style="color: var(--text-tertiary); font-size: 0.85rem;">No tags available</span>';
+    return;
+  }
+
+  tagFiltersContainer.innerHTML = commentBank.tags.map(tag => `
+    <span class="tag-filter"
+          data-tag-id="${tag.id}"
+          style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};"
+          onclick="toggleTagFilter('${tag.id}')">
+      ${tag.name}
+    </span>
+  `).join('');
+
+  updateFilterCount();
+}
+
+// Toggle Tag Filter
+function toggleTagFilter(tagId) {
+  const index = activeTagFilters.indexOf(tagId);
+  if (index > -1) {
+    activeTagFilters.splice(index, 1);
+  } else {
+    activeTagFilters.push(tagId);
+  }
+
+  // Update visual state
+  const filterElement = document.querySelector(`.tag-filter[data-tag-id="${tagId}"]`);
+  if (filterElement) {
+    filterElement.classList.toggle('active');
+  }
+
+  // Show/hide clear button
+  const clearBtn = document.getElementById('clear-filters-btn');
+  clearBtn.style.display = activeTagFilters.length > 0 ? 'block' : 'none';
+
+  updateFilterCount();
+  displayComments(commentBanks[currentCommentBankIndex].comments);
+}
+
+// Clear All Filters
+function clearTagFilters() {
+  activeTagFilters = [];
+
+  // Remove active class from all filters
+  document.querySelectorAll('.tag-filter.active').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  // Hide clear button
+  document.getElementById('clear-filters-btn').style.display = 'none';
+
+  updateFilterCount();
+  displayComments(commentBanks[currentCommentBankIndex].comments);
+}
+
+// Update Filter Count Display
+function updateFilterCount() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const filterCountEl = document.getElementById('filter-count');
+
+  if (activeTagFilters.length === 0) {
+    filterCountEl.textContent = `Showing all ${commentBank.comments.length} comments`;
+  } else {
+    const filteredCount = commentBank.comments.filter(comment => {
+      return comment.tags && comment.tags.some(tagId => activeTagFilters.includes(tagId));
+    }).length;
+    filterCountEl.textContent = `Showing ${filteredCount} of ${commentBank.comments.length} comments`;
+  }
 }
 
 function displayComments(comments) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
   const commentsList = document.getElementById('comments-list');
   commentsList.innerHTML = '';
-  comments.forEach((comment, index) => {
+
+  // Ensure tags exist
+  if (!commentBank.tags) {
+    commentBank.tags = getDefaultTags();
+  }
+
+  // Show empty state if no comments
+  if (comments.length === 0) {
+    commentsList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <h3>No comments yet</h3>
+        <p>Click the "+ Add Comment" button above to create your first comment</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Sort comments: filtered ones first if filters are active
+  let sortedComments = comments.map((comment, originalIndex) => ({ comment, originalIndex }));
+
+  if (activeTagFilters.length > 0) {
+    sortedComments = sortedComments.sort((a, b) => {
+      const aHasTag = a.comment.tags && a.comment.tags.some(tagId => activeTagFilters.includes(tagId));
+      const bHasTag = b.comment.tags && b.comment.tags.some(tagId => activeTagFilters.includes(tagId));
+
+      if (aHasTag && !bHasTag) return -1;
+      if (!aHasTag && bHasTag) return 1;
+      return 0;
+    });
+  }
+
+  sortedComments.forEach(({ comment, originalIndex: index }) => {
+    // Check if comment matches any active filters
+    const matchesFilter = activeTagFilters.length === 0 ||
+      (comment.tags && comment.tags.some(tagId => activeTagFilters.includes(tagId)));
     const commentElement = document.createElement('div');
     commentElement.className = 'comment';
-    commentElement.style.backgroundColor = comment.color;
+
+    // Add visual feedback for filtered state
+    if (activeTagFilters.length > 0 && !matchesFilter) {
+      commentElement.style.opacity = '0.4';
+    }
+
+    // Ensure comment has tags array
+    if (!comment.tags) {
+      comment.tags = [];
+    }
+
+    // Get comment's tags
+    const commentTags = comment.tags.map(tagId => {
+      return commentBank.tags.find(t => t.id === tagId);
+    }).filter(t => t); // Remove undefined tags
+
+    // Set accent color (use first tag color or default)
+    const accentColor = commentTags.length > 0 ? commentTags[0].color : '#888';
+    commentElement.style.setProperty('--comment-accent-color', accentColor);
+
+    // Build tags HTML
+    const tagsHTML = commentTags.length > 0
+      ? commentTags.map(tag => `
+          <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+            ${tag.name}
+          </span>
+        `).join('')
+      : '<span class="tag" style="background-color: #f5f5f5; color: #999; border-color: #ddd;">No tags</span>';
+
     commentElement.innerHTML = `
-      <input type="checkbox" class="comment-checkbox">
-      <div class="comment-content">
-        <p>${comment.text}</p>
-        <div class="arrow-buttons">
-          <button class="arrow-button arrow-up" onclick="moveCommentUp(${index})">&#x25B2;</button>
-          <button class="arrow-button arrow-down" onclick="moveCommentDown(${index})">&#x25BC;</button>
+      <!-- Comment Header -->
+      <div class="comment-header">
+        <input type="checkbox" class="comment-checkbox" data-comment-index="${index}" ${selectedComments.has(index) ? 'checked' : ''}>
+        <div class="tags-container">
+          ${tagsHTML}
+        </div>
+        <div style="flex: 1"></div>
+        <div class="reorder-buttons">
+          <button class="reorder-btn" onclick="moveCommentUp(${index})" ${index === 0 ? 'disabled' : ''} title="Move up">∧</button>
+          <button class="reorder-btn" onclick="moveCommentDown(${index})" ${index === comments.length - 1 ? 'disabled' : ''} title="Move down">∨</button>
         </div>
       </div>
-      <div class="comment-actions">
-        <button onclick="editComment(this, ${index})">Edit</button>
-        <button class="copy-button" onclick="copyComment(this)">Copy</button>
-        <button onclick="deleteComment(${index})">Delete</button>
-        <div class="color-bubbles">
-          <span class="color-bubble" style="background-color: #FFD700;" onclick="changeCommentColor(this, '#FFD700')"></span>
-          <span class="color-bubble" style="background-color: #FFC0CB;" onclick="changeCommentColor(this, '#FFC0CB')"></span>
-          <span class="color-bubble" style="background-color: #90EE90;" onclick="changeCommentColor(this, '#90EE90')"></span>
-          <span class="color-bubble" style="background-color: #ADD8E6;" onclick="changeCommentColor(this, '#ADD8E6')"></span>
-          <span class="color-bubble" style="background-color: #F0E68C;" onclick="changeCommentColor(this, '#F0E68C')"></span>
+
+      <!-- Comment Body -->
+      <div class="comment-body">
+        <div class="comment-text">${comment.text}</div>
+      </div>
+
+      <!-- Comment Footer -->
+      <div class="comment-footer">
+        <div class="comment-actions-inline">
+          <button onclick="editComment(this, ${index})">✏️ Edit</button>
+          <button class="copy-button" onclick="copyComment(this)">📋 Copy</button>
+          <button onclick="deleteComment(${index})" style="color: #dc3545;">🗑️ Delete</button>
         </div>
+
+        <button class="tag-picker-toggle" data-comment-index="${index}">🏷️ Tags</button>
       </div>
     `;
     commentsList.appendChild(commentElement);
+
+    // Add event listener to checkbox to track selection
+    const checkbox = commentElement.querySelector('.comment-checkbox');
+    checkbox.addEventListener('change', function() {
+      const idx = parseInt(this.getAttribute('data-comment-index'));
+      if (this.checked) {
+        selectedComments.add(idx);
+      } else {
+        selectedComments.delete(idx);
+      }
+    });
+  });
+
+  // Set up global tag picker event listeners
+  setupGlobalTagPicker();
+}
+
+function buildTagPickerOptions(availableTags, selectedTagIds, commentIndex) {
+  if (!availableTags || availableTags.length === 0) {
+    return '<p style="padding: var(--space-md); text-align: center; color: var(--text-tertiary);">No tags available. Click "Manage Tags" to create some!</p>';
+  }
+
+  return availableTags.map(tag => {
+    const isSelected = selectedTagIds.includes(tag.id);
+    return `
+      <div class="tag-option ${isSelected ? 'selected' : ''}" data-tag-id="${tag.id}" data-comment-index="${commentIndex}">
+        <input type="checkbox" class="tag-option-checkbox" ${isSelected ? 'checked' : ''}>
+        <span class="tag-swatch" style="background-color: ${tag.color};"></span>
+        <span class="tag-option-name">${tag.name}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Setup global tag picker dropdown
+let globalTagPickerActive = false;
+let globalListenersInitialized = false;
+
+function setupGlobalTagPicker() {
+  const globalPicker = document.getElementById('global-tag-picker');
+  const toggleButtons = document.querySelectorAll('.tag-picker-toggle');
+
+  // Remove old listeners by cloning (simple way to remove all event listeners)
+  const newGlobalPicker = globalPicker.cloneNode(true);
+  globalPicker.parentNode.replaceChild(newGlobalPicker, globalPicker);
+
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const commentIndex = parseInt(this.getAttribute('data-comment-index'));
+      openGlobalTagPicker(this, commentIndex);
+    });
+  });
+
+  // Only initialize document-level listeners once
+  if (!globalListenersInitialized) {
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#global-tag-picker') && !e.target.closest('.tag-picker-toggle')) {
+        closeGlobalTagPicker();
+      }
+    });
+
+    // Close when scrolling (since position becomes misaligned)
+    window.addEventListener('scroll', function() {
+      if (globalTagPickerActive) {
+        closeGlobalTagPicker();
+      }
+    });
+
+    globalListenersInitialized = true;
+  }
+}
+
+function openGlobalTagPicker(button, commentIndex) {
+  if (currentCommentBankIndex === -1) return;
+
+  const globalPicker = document.getElementById('global-tag-picker');
+
+  // If clicking the same button that's already open, close it
+  const currentCommentIndex = globalPicker.getAttribute('data-current-comment');
+  if (globalTagPickerActive && currentCommentIndex == commentIndex) {
+    closeGlobalTagPicker();
+    return;
+  }
+
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const comment = commentBank.comments[commentIndex];
+
+  // Store which comment this picker is for
+  globalPicker.setAttribute('data-current-comment', commentIndex);
+
+  // Build tag options HTML
+  globalPicker.innerHTML = buildTagPickerOptions(commentBank.tags, comment.tags, commentIndex);
+
+  // Position the dropdown - account for scroll position
+  const buttonRect = button.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+  const pickerHeight = 320; // Max height
+  const spaceBelow = window.innerHeight - buttonRect.bottom;
+  const spaceAbove = buttonRect.top;
+
+  // Position it aligned with the button (accounting for scroll)
+  globalPicker.style.left = (buttonRect.left + scrollLeft) + 'px';
+
+  // Position above or below based on available space
+  if (spaceBelow > pickerHeight || spaceBelow > spaceAbove) {
+    // Open below
+    globalPicker.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+    globalPicker.style.bottom = 'auto';
+  } else {
+    // Open above
+    globalPicker.style.top = (buttonRect.top + scrollTop - pickerHeight - 4) + 'px';
+    globalPicker.style.bottom = 'auto';
+  }
+
+  // Show the dropdown
+  globalPicker.style.display = 'block';
+  globalTagPickerActive = true;
+
+  // Setup listeners for tag options
+  const tagOptions = globalPicker.querySelectorAll('.tag-option');
+  tagOptions.forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const checkbox = this.querySelector('.tag-option-checkbox');
+      const tagId = this.getAttribute('data-tag-id');
+      const index = parseInt(this.getAttribute('data-comment-index'));
+
+      checkbox.checked = !checkbox.checked;
+      toggleCommentTag(index, tagId);
+      this.classList.toggle('selected');
+    });
+
+    // Prevent checkbox click from double-toggling
+    const checkbox = option.querySelector('.tag-option-checkbox');
+    checkbox.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
   });
 }
 
-function changeCommentColor(colorBubble, color) {
-  const commentElement = colorBubble.closest('.comment');
-  const commentIndex = Array.from(commentElement.parentNode.children).indexOf(commentElement);
-  const currentCommentBank = commentBanks[commentBanks.length - 1];
-  currentCommentBank.comments[commentIndex].color = color;
-  commentElement.style.backgroundColor = color;
-  saveData();
+function closeGlobalTagPicker() {
+  const globalPicker = document.getElementById('global-tag-picker');
+  globalPicker.style.display = 'none';
+  globalPicker.removeAttribute('data-current-comment');
+  globalTagPickerActive = false;
 }
+
+function toggleCommentTag(commentIndex, tagId) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const comment = commentBank.comments[commentIndex];
+
+  if (!comment.tags) {
+    comment.tags = [];
+  }
+
+  const tagIndex = comment.tags.indexOf(tagId);
+  if (tagIndex > -1) {
+    comment.tags.splice(tagIndex, 1);
+  } else {
+    comment.tags.push(tagId);
+  }
+
+  saveData();
+  // Update just the tags display without re-rendering entire list
+  const commentElement = document.querySelectorAll('.comment')[commentIndex];
+  const tagsContainer = commentElement.querySelector('.tags-container');
+
+  const commentTags = comment.tags.map(tid => {
+    return commentBank.tags.find(t => t.id === tid);
+  }).filter(t => t);
+
+  const tagsHTML = commentTags.length > 0
+    ? commentTags.map(tag => `
+        <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+          ${tag.name}
+        </span>
+      `).join('')
+    : '<span class="tag" style="background-color: #f5f5f5; color: #999; border-color: #ddd;">No tags</span>';
+
+  tagsContainer.innerHTML = tagsHTML;
+
+  // Update accent color
+  const accentColor = commentTags.length > 0 ? commentTags[0].color : '#888';
+  commentElement.style.setProperty('--comment-accent-color', accentColor);
+}
+
+// Legacy functions removed - now using tag system
 
 function clearData() {
   localStorage.removeItem('commentBankData');
@@ -918,7 +2341,14 @@ function hideAllPopups() {
   document.getElementById('download-popup').style.display = 'none';
   document.getElementById('upload-popup').style.display = 'none';
   document.getElementById('add-comment-popup').style.display = 'none';
+  document.getElementById('tag-manager-popup').style.display = 'none';
   document.getElementById('overlay').style.display = 'none';
+
+  // Close options dropdown if open
+  const dropdown = document.getElementById('optionsDropdownMenu');
+  if (dropdown && dropdown.classList.contains('show')) {
+    dropdown.classList.remove('show');
+  }
 }
 
 function showAddCommentPopup() {
@@ -930,6 +2360,95 @@ function showAddCommentPopup() {
 function hideAddCommentPopup() {
   document.getElementById('add-comment-popup').style.display = 'none';
   document.getElementById('overlay').style.display = 'none';
+}
+
+// Tag Management Functions
+function showTagManager() {
+  displayTagList();
+  document.getElementById('tag-manager-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function hideTagManager() {
+  document.getElementById('tag-manager-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function displayTagList() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagList = document.getElementById('tag-list');
+
+  if (!commentBank.tags || commentBank.tags.length === 0) {
+    tagList.innerHTML = '<p style="text-align: center; color: var(--text-tertiary); padding: var(--space-xl);">No tags yet. Create your first tag below!</p>';
+    return;
+  }
+
+  tagList.innerHTML = commentBank.tags.map(tag => `
+    <div class="tag-list-item">
+      <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+        ${tag.name}
+      </span>
+      <div class="tag-list-actions">
+        <button onclick="deleteTag('${tag.id}')" style="background: #dc3545; color: white;">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addNewTag() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagName = document.getElementById('new-tag-name').value.trim();
+  const tagColor = document.getElementById('new-tag-color').value;
+
+  if (!tagName) {
+    alert('Please enter a tag name');
+    return;
+  }
+
+  if (!commentBank.tags) {
+    commentBank.tags = [];
+  }
+
+  commentBank.tags.push({
+    id: generateId(),
+    name: tagName,
+    color: tagColor
+  });
+
+  saveData();
+  displayTagList();
+  displayTagFilterBar(); // Update the filter bar with the new tag
+  document.getElementById('new-tag-name').value = '';
+  document.getElementById('new-tag-color').value = '#6b2d8f';
+}
+
+function deleteTag(tagId) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+
+  if (!confirm('Delete this tag? It will be removed from all comments.')) {
+    return;
+  }
+
+  // Remove tag from all comments
+  commentBank.comments.forEach(comment => {
+    if (comment.tags) {
+      comment.tags = comment.tags.filter(id => id !== tagId);
+    }
+  });
+
+  // Remove tag from comment bank
+  commentBank.tags = commentBank.tags.filter(tag => tag.id !== tagId);
+
+  // Remove from active filters if it was active
+  activeTagFilters = activeTagFilters.filter(id => id !== tagId);
+
+  saveData();
+  displayTagList();
+  displayTagFilterBar(); // Update the filter bar
+  displayComments(commentBank.comments);
 }
 
 function uploadSelectedCommentBank() {
@@ -953,7 +2472,8 @@ function saveComment() {
   const commentText = document.getElementById('comment-text').value;
   const commentIndex = document.getElementById('add-comment-popup').getAttribute('data-index');
   if (commentText) {
-    const currentCommentBank = commentBanks[commentBanks.length - 1];
+    if (currentCommentBankIndex === -1) return;
+    const currentCommentBank = commentBanks[currentCommentBankIndex];
     if (commentIndex) {
       currentCommentBank.comments[commentIndex].text = commentText;
     } else {
@@ -971,22 +2491,52 @@ function saveComment() {
 }
 
 function moveCommentUp(index) {
-  const currentCommentBank = commentBanks[commentBanks.length - 1];
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
   if (index > 0) {
     const temp = currentCommentBank.comments[index];
     currentCommentBank.comments[index] = currentCommentBank.comments[index - 1];
     currentCommentBank.comments[index - 1] = temp;
+
+    // Update selectedComments: swap the indices if either is selected
+    const wasCurrentSelected = selectedComments.has(index);
+    const wasPreviousSelected = selectedComments.has(index - 1);
+
+    if (wasCurrentSelected) {
+      selectedComments.delete(index);
+      selectedComments.add(index - 1);
+    }
+    if (wasPreviousSelected) {
+      selectedComments.delete(index - 1);
+      selectedComments.add(index);
+    }
+
     saveData();
     displayComments(currentCommentBank.comments);
   }
 }
 
 function moveCommentDown(index) {
-  const currentCommentBank = commentBanks[commentBanks.length - 1];
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
   if (index < currentCommentBank.comments.length - 1) {
     const temp = currentCommentBank.comments[index];
     currentCommentBank.comments[index] = currentCommentBank.comments[index + 1];
     currentCommentBank.comments[index + 1] = temp;
+
+    // Update selectedComments: swap the indices if either is selected
+    const wasCurrentSelected = selectedComments.has(index);
+    const wasNextSelected = selectedComments.has(index + 1);
+
+    if (wasCurrentSelected) {
+      selectedComments.delete(index);
+      selectedComments.add(index + 1);
+    }
+    if (wasNextSelected) {
+      selectedComments.delete(index + 1);
+      selectedComments.add(index);
+    }
+
     saveData();
     displayComments(currentCommentBank.comments);
   }
@@ -994,6 +2544,51 @@ function moveCommentDown(index) {
 
 setInterval(saveData, 3000);
 window.addEventListener('load', loadData);
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', function(event) {
+  const hash = window.location.hash.substring(1);
+  if (hash) {
+    // Find and open the comment bank (without updating history again)
+    const index = commentBanks.findIndex(bank => slugify(bank.assignmentName) === hash);
+    if (index !== -1 && index !== currentCommentBankIndex) {
+      openCommentBank(index, false);
+    }
+  } else {
+    // No hash means we should go home
+    if (currentCommentBankIndex !== -1) {
+      document.getElementById('comment-container').style.display = 'none';
+      document.getElementById('landing-container').style.display = 'block';
+      document.querySelector('.container').style.display = 'block';
+      currentCommentBankIndex = -1;
+    }
+  }
+});
+
+// Options Dropdown Toggle
+function toggleOptionsDropdown() {
+  const dropdown = document.getElementById('optionsDropdownMenu');
+  dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+window.addEventListener('click', function(event) {
+  if (!event.target.matches('.about-btn') && !event.target.matches('#optionsDropdownBtn')) {
+    const dropdowns = document.getElementsByClassName('options-dropdown-menu');
+    for (let i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+});
+
+// Show About function
+function showAbout() {
+  alert('Say More Here - Writing Teachers Comment Bank\n\nA tool for educators to manage and organize writing feedback comments.\n\nVersion 1.0');
+  toggleOptionsDropdown();
+}
 </script>
 </body>
 </html>
