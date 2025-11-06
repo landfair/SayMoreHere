@@ -1540,6 +1540,10 @@ function deleteCommentBanks() {
   const deleteCheckboxes = document.getElementById('delete-checkboxes');
   deleteCheckboxes.innerHTML = '';
   commentBanks.forEach((commentBank, index) => {
+    // Skip the Sample Comment Bank - don't allow deletion
+    if (commentBank.assignmentName === "Sample Comment Bank") {
+      return;
+    }
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.id = `comment-bank-${index}`;
@@ -1587,7 +1591,13 @@ function deleteSelectedCommentBanks() {
   // Get the selected comment banks and delete them
   const selectedCommentBanks = Array.from(document.querySelectorAll('#delete-checkboxes input[type="checkbox"]:checked'))
     .map(checkbox => parseInt(checkbox.value));
-  commentBanks = commentBanks.filter((_, index) => !selectedCommentBanks.includes(index));
+  // Filter out selected banks, but never delete the Sample Comment Bank
+  commentBanks = commentBanks.filter((bank, index) => {
+    if (bank.assignmentName === "Sample Comment Bank") {
+      return true; // Always keep Sample Comment Bank
+    }
+    return !selectedCommentBanks.includes(index);
+  });
   saveData();
   updateCommentBankList();
   hideConfirmDeletePopup();
@@ -1740,55 +1750,58 @@ function getPreloadedCommentBanks() {
     { id: generateId(), name: 'Intro', color: '#9b59b6' },
     { id: generateId(), name: 'Evidence', color: '#3498db' },
     { id: generateId(), name: 'Organization', color: '#2ecc71' },
-    { id: generateId(), name: 'Stakes', color: '#c0392b' },
-    { id: generateId(), name: 'Ethos', color: '#34495e' },
     { id: generateId(), name: 'Voice', color: '#e74c3c' },
     { id: generateId(), name: 'Conclusion', color: '#8e44ad' },
     { id: generateId(), name: 'Praise', color: '#ffd700' },
-    { id: generateId(), name: 'Critical', color: '#e67e22' }
+    { id: generateId(), name: 'Critical', color: '#e67e22' },
+    { id: generateId(), name: 'Salutation', color: '#1ABC9C' },
+    { id: generateId(), name: 'Valediction', color: '#16A085' }
   ];
 
-  const opEdComments = [
-    { text: "I enjoyed reading this latest version of your op-ed. This new draft features a more direct approach and clearer articulation of your main point.", tags: [tags[0].id, tags[7].id] },
-    { text: "Your opening paragraphs do a great job establishing the status quo perspective that your essay will challenge. This context allows your own claim to appear relevant and surprising.", tags: [tags[0].id, tags[7].id] },
-    { text: "Your essay gets off to a strong start, clearly stating the problem and establishing why readers should care about this issue.", tags: [tags[0].id, tags[3].id, tags[7].id] },
-    { text: "However, it's not until the third paragraph that your op-ed really gets interesting. An editor interested in your essay would almost certainly ask you to begin the essay here, where you reveal your relationship to this topic.", tags: [tags[0].id, tags[2].id] },
-    { text: "Your essay doesn't yet describe your own relationship to this issue. Readers will need help understanding how your positionality lends you special insights into this topic.", tags: [tags[4].id] },
-    { text: "Your essay lacks adequate evidence of the problem. The examples provided aren't enough to demonstrate that this problem exists. Can you find more—and more authoritative—data?", tags: [tags[1].id] },
-    { text: "Though your essay offers concrete examples, they're not enough to support sweeping generalizations. Readers might wonder if other factors could explain these differences.", tags: [tags[1].id, tags[5].id] },
-    { text: "Your essay overly relies on speculation and unsupported generalizations. An editor will likely encourage you to bolster your argument with clearer, stronger evidence.", tags: [tags[1].id] },
-    { text: "Your paragraph about [specific example] nicely illustrates your point and provides the kind of concrete detail that makes your argument persuasive.", tags: [tags[1].id, tags[5].id, tags[7].id] },
-    { text: "Your essay mentions a study but doesn't explain the methods or results of this research. Without more context, it's not clear how this study supports your claim.", tags: [tags[1].id] },
-    { text: "Unless you're an educational researcher, it will be difficult to support these kinds of general claims. Your expertise here comes from your experience as a student. Therefore, the strongest version of your essay will focus on your own personal experiences, habits, and impressions—a case study of one, conducted by yourself on yourself.", tags: [tags[1].id, tags[4].id] },
-    { text: "This could feel more concrete if your essay included the voices of students/people who experience this issue. An editor interested in your op-ed would likely encourage you to find quotes from these individuals.", tags: [tags[1].id, tags[5].id] },
-    { text: "Though I agree with your conclusion, I worry that your evidence might strike readers as weak or insignificant. These kinds of grievances might seem petty to some readers, and make the issue seem less significant than it really is.", tags: [tags[1].id, tags[3].id] },
-    { text: "Your essay demonstrates a solid understanding of the form and function of op-eds, and your draft features strong evidence to support your claims.", tags: [tags[1].id, tags[7].id] },
-    { text: "The organization and structure aren't yet optimized for readers' comprehension and engagement. As a reader, I wished the essay could state your opinion more strongly and directly in the opening paragraphs.", tags: [tags[2].id] },
-    { text: "This newest draft features a streamlined structure that will help readers understand the focus and purpose of your op-ed more quickly and easily.", tags: [tags[2].id, tags[7].id] },
-    { text: "You've got all or most of the ingredients of a great op-ed, though they're not yet arranged in the most helpful order.", tags: [tags[2].id] },
-    { text: "An editor interested in your op-ed would likely encourage you to establish clearer stakes. Why does this matter? Perhaps there's room to reflect on the significance of this issue.", tags: [tags[3].id] },
-    { text: "Your essay does a great job at establishing the stakes of your argument. It's a big claim, but I suspect most readers will go along with it.", tags: [tags[3].id, tags[7].id] },
-    { text: "It's not yet clear what you want your readers to *do* with this information. An editor would likely ask you to reflect on the implications of these differences. How should we think or behave differently once we understand the situation?", tags: [tags[3].id] },
-    { text: "What do your classmates' opinions about this issue suggest about their attitudes toward [broader topic]? Help us understand the full significance of this issue.", tags: [tags[3].id] },
-    { text: "After all, many thousands of students could make the same claim to authority. You'll need to make a stronger claim to authority—or choose another topic more directly related to your own lived experience—in order to catch an editor's eye.", tags: [tags[4].id] },
-    { text: "You explain the situation clearly when you suggest that [specific comparison]. This was a striking and well-evidenced perspective that demonstrates your unique insight.", tags: [tags[4].id, tags[7].id] },
-    { text: "My favorite moments are the ones that describe specific activities and concrete details. But these moments play too small a role. Readers will be hungry for a clearer, more detailed picture of the experience you're describing.", tags: [tags[5].id] },
-    { text: "A strong op-ed might fill this gap with anecdotes, scenes, or dialog that shows us (rather than tells us) what you're describing.", tags: [tags[5].id] },
-    { text: "The example presented in this paragraph felt wonderfully concrete—a great illustration of your point.", tags: [tags[5].id, tags[7].id] },
-    { text: "Readers' favorite moments in the essay will probably be those that are most specific and most personal.", tags: [tags[5].id, tags[4].id] },
-    { text: "I worry that the ending might strike readers as underwhelming, sentimental, or even a bit cheesy. Try ending the essay on a more serious note, rather than a falsely inspiring one.", tags: [tags[6].id] },
-    { text: "However, your conclusion doesn't clearly follow from the previous paragraphs. How are these ideas related?", tags: [tags[6].id] },
-    { text: "The end of your essay explains—though perhaps not explicitly enough—that you're not suggesting we return to the stone age. You're advocating for a thoughtful middle ground.", tags: [tags[6].id, tags[7].id] },
-    { text: "All in all, your essay demonstrates a solid understanding of the form and function of op-eds, and your draft probably requires the kind of light-to-moderate edits, for polish and concision, typical of accepted drafts. I suspect the right editor at the right newspaper would be happy to find this in their inbox.", tags: [tags[7].id] },
-    { text: "All in all, your essay demonstrates a generally solid understanding of the form and function of op-eds, though you'll need [specific improvement] to catch an editor's eye.", tags: [] },
-    { text: "All in all, your essay demonstrates a basic understanding of the form and function of op-eds, though your draft will need stronger, clearer evidence in order to catch an editor's eye.", tags: [tags[1].id] },
-    { text: "Your essay demonstrates a firm understanding of the form and function of op-eds. Though it's strictly optional at this point, I encourage you to keep working on this and submit it to a newspaper. It would be great to see your ideas in print.", tags: [tags[7].id] }
+  const sampleComments = [
+    { text: "Dear [Student Name],\n\nI enjoyed reading your essay and learning more about your thinking on this topic.", tags: [tags[7].id, tags[5].id] },
+    { text: "Thank you for sharing this draft with me. I can see you've put considerable thought into developing these ideas.", tags: [tags[7].id, tags[5].id] },
+    { text: "I'm looking forward to seeing where you take this essay in your next revision.", tags: [tags[8].id] },
+    { text: "Please feel free to stop by my office hours if you'd like to discuss any of these suggestions further.", tags: [tags[8].id] },
+    { text: "Your opening paragraph immediately drew me in as a reader. I wanted to keep reading to find out where you were going with this idea.", tags: [tags[0].id, tags[5].id] },
+    { text: "I'm intrigued by your opening, but I'm not yet sure what question or problem your essay will address. What do you want readers to understand by the end?", tags: [tags[0].id] },
+    { text: "As a reader, I found myself wanting more context in your introduction. What background information do I need to understand why this topic matters?", tags: [tags[0].id] },
+    { text: "Your introduction establishes the topic, but I'm not yet hearing your voice or perspective. What's your stake in this issue? Why does it matter to you?", tags: [tags[0].id, tags[3].id] },
+    { text: "You make an interesting claim in your opening paragraph. Can you help me understand what led you to this conclusion?", tags: [tags[0].id, tags[1].id] },
+    { text: "The specific example you provide in paragraph 3 is compelling. This kind of concrete detail helps me understand your point much more clearly.", tags: [tags[1].id, tags[5].id] },
+    { text: "I'm not quite convinced by the evidence in this section. What additional details or examples might help skeptical readers understand your perspective?", tags: [tags[1].id] },
+    { text: "When you write [quote specific phrase], I'm not sure how this supports your main argument. Can you help me see the connection?", tags: [tags[1].id] },
+    { text: "This paragraph feels like it's summarizing what others have said. What do you think about this issue? I want to hear your analysis, not just a report.", tags: [tags[1].id, tags[3].id] },
+    { text: "You mention [fact/statistic] here, but I'm wondering: where did this information come from? How do we know it's reliable?", tags: [tags[1].id] },
+    { text: "The evidence you've gathered is strong, but I'm not sure it all points in the same direction. What's the throughline connecting these examples?", tags: [tags[1].id, tags[2].id] },
+    { text: "Your structure helps me follow your thinking. Each paragraph seems to build logically on the previous one.", tags: [tags[2].id, tags[5].id] },
+    { text: "I lost track of your main argument somewhere in the middle of the essay. How do paragraphs 4-6 relate to your central claim?", tags: [tags[2].id] },
+    { text: "This paragraph introduces a new idea that seems important. Should it come earlier in the essay? How does it fit with what you've already said?", tags: [tags[2].id] },
+    { text: "I notice you're making several different arguments here. Which one is most central to your essay? Can the others support that main claim?", tags: [tags[2].id] },
+    { text: "Your transitions help me see how your ideas connect. I can follow your reasoning from one paragraph to the next.", tags: [tags[2].id, tags[5].id] },
+    { text: "I'm struck by the way you describe [specific detail]. This kind of specific, vivid writing brings your ideas to life.", tags: [tags[3].id, tags[5].id] },
+    { text: "Your voice comes through most strongly when you're describing your own experience. Can you bring that same energy to other parts of the essay?", tags: [tags[3].id] },
+    { text: "I can hear you trying to sound 'academic' here, but it makes your writing feel stiff. What if you explained this idea the way you'd tell a friend about it?", tags: [tags[3].id] },
+    { text: "When you write in the passive voice ('it was discovered that...'), your ideas lose some of their energy. Who discovered this? What did they do?", tags: [tags[3].id] },
+    { text: "This sentence is doing a lot of work. Could you break it into two or three shorter sentences to help readers follow your thinking?", tags: [tags[3].id] },
+    { text: "Your conclusion brings the essay full circle nicely. I can see how your thinking has developed from the opening to here.", tags: [tags[4].id, tags[5].id] },
+    { text: "Your conclusion summarizes what you've already said, but I'm wondering: so what? Why should readers care about this? What should we do with this information?", tags: [tags[4].id] },
+    { text: "The ending feels abrupt. I wanted to hear you reflect more on the implications of what you've argued. What's at stake here?", tags: [tags[4].id] },
+    { text: "You raise an interesting new point in your conclusion. This seems like it could be part of your main argument—should it appear earlier?", tags: [tags[4].id, tags[2].id] },
+    { text: "You've done solid work on this draft. Your ideas are interesting and your argument is starting to take shape.", tags: [tags[5].id] },
+    { text: "This draft shows real growth since your last essay. I can see you're developing more sophisticated ways of supporting your claims.", tags: [tags[5].id] },
+    { text: "You're asking important questions in this essay. I'm excited to see how you continue to develop these ideas.", tags: [tags[5].id] },
+    { text: "The way you've integrated your sources here is much smoother than in earlier drafts. Nice work.", tags: [tags[5].id, tags[1].id] },
+    { text: "I'm not sure what you're trying to say in this section. Can you clarify your main point here?", tags: [tags[6].id] },
+    { text: "This draft reads more like a collection of ideas than a unified argument. What's the central claim that holds everything together?", tags: [tags[6].id, tags[2].id] },
+    { text: "You're making claims here that need more support. What evidence would help readers understand why this is true?", tags: [tags[6].id, tags[1].id] },
+    { text: "I notice you're relying heavily on generalizations. Can you point to specific examples or moments that illustrate what you mean?", tags: [tags[6].id, tags[1].id] }
   ];
 
   return [{
-    assignmentName: "Op-Ed Feedback Bank",
+    assignmentName: "Sample Comment Bank",
     tags: tags,
-    comments: opEdComments
+    comments: sampleComments
   }];
 }
 
@@ -1814,14 +1827,21 @@ function loadData() {
         });
       }
     });
-    saveData(); // Save migrated data
-    updateCommentBankList();
   } else {
-    // Load preloaded comment bank on first use
-    commentBanks = getPreloadedCommentBanks();
-    saveData();
-    updateCommentBankList();
+    // Initialize with empty array
+    commentBanks = [];
   }
+
+  // Always ensure Sample Comment Bank exists
+  const hasSampleBank = commentBanks.some(bank => bank.assignmentName === "Sample Comment Bank");
+  if (!hasSampleBank) {
+    // Add Sample Comment Bank at the beginning
+    const sampleBank = getPreloadedCommentBanks()[0];
+    commentBanks.unshift(sampleBank);
+  }
+
+  saveData(); // Save any changes
+  updateCommentBankList();
 
   // Check if there's a hash in the URL and open the corresponding bank
   loadCommentBankFromURL();
@@ -2279,7 +2299,9 @@ function toggleCommentTag(commentIndex, tagId) {
 
 function clearData() {
   localStorage.removeItem('commentBankData');
-  commentBanks = [];
+  // Reset to just the Sample Comment Bank
+  commentBanks = getPreloadedCommentBanks();
+  saveData();
   updateCommentBankList();
   hideClearDataPopup();
 }
