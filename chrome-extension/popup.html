@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Teachers Comment Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo-container">
+      <img src="https://i.imgur.com/iIODsNl.png" alt="Logo" class="logo-img" id="headerLogo">
+    </div>
+    <div class="header-title">
+      <h1>Say More Here</h1>
+    </div>
+    <div class="header-buttons">
+      <!-- Options Dropdown -->
+      <div class="options-dropdown">
+        <button class="about-btn" id="optionsDropdownBtn" onclick="toggleOptionsDropdown()">
+          Options ∨
+        </button>
+        <div class="options-dropdown-menu" id="optionsDropdownMenu">
+          <button class="dropdown-item" onclick="showAbout()">About</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); uploadCommentBank()">Upload Comment Bank</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); downloadCommentBank()">Download Comment Bank</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); deleteCommentBanks()">Delete Comment Bank(s)</button>
+          <button class="dropdown-item" onclick="toggleOptionsDropdown(); showClearDataPopup()">Reset All Data</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="overlay" class="overlay" onclick="hideAllPopups()"></div>
+
+  <div class="container">
+
+      <div id="delete-popup" class="popup">
+        <h2>Select Comment Banks to Delete</h2>
+        <div id="delete-checkboxes"></div>
+        <div class="popup-buttons">
+          <button onclick="confirmDeleteCommentBanks()">Delete</button>
+          <button onclick="hideDeletePopup()">Cancel</button>
+        </div>
+      </div>
+
+      <div id="confirm-delete-popup" class="popup">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete the selected comment banks?</p>
+        <div class="popup-buttons">
+          <button onclick="deleteSelectedCommentBanks()">Yes, delete them</button>
+          <button onclick="hideConfirmDeletePopup()">No, cancel</button>
+        </div>
+      </div>
+
+      <div id="download-popup" class="popup">
+        <h2>Select Comment Bank to Download</h2>
+        <div id="download-options"></div>
+        <div class="popup-buttons">
+          <button onclick="downloadSelectedCommentBank()">Download</button>
+          <button onclick="hideDownloadPopup()">Cancel</button>
+        </div>
+      </div>
+
+      <div id="upload-popup" class="popup">
+        <h2>Upload Comment Bank</h2>
+        <input type="file" id="upload-input" accept=".bank">
+        <div class="popup-buttons">
+          <button onclick="uploadSelectedCommentBank()">Upload</button>
+          <button onclick="hideUploadPopup()">Cancel</button>
+        </div>
+      </div>
+
+    <div id="landing-container">
+
+
+        <div id="comment-bank-list" class="comment-banks">
+            <div class="add-comment-bank">
+              <button class="add-button" onclick="showPopup()">+ Add Comment Bank</button>
+            </div>
+          </div>
+          <p class="no-comment-banks" id="no-comment-banks-message">No comment banks created yet.</p>
+        </div>
+      </div>
+
+      <div id="clear-data-popup" class="popup">
+        <h2>Are you sure you want to erase your data?</h2>
+        <div class="popup-buttons">
+          <button onclick="clearData()">Yes, let's erase it all!</button>
+          <button onclick="hideClearDataPopup()">No, never mind.</button>
+        </div>
+      </div>
+
+  <div id="popup" class="popup">
+    <h2>Enter Assignment Name</h2>
+    <input type="text" id="assignment-name" placeholder="Example: Op-ed Fall 2024">
+  </div>
+
+  <!-- Tag Management Modal -->
+  <div id="tag-manager-popup" class="popup tag-manager">
+    <h2>Manage Tags</h2>
+    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">Create custom tags to organize your comments. You can apply multiple tags to each comment.</p>
+
+    <div class="tag-list" id="tag-list"></div>
+
+    <div class="tag-form">
+      <div class="tag-form-group">
+        <label>Tag Name</label>
+        <input type="text" id="new-tag-name" placeholder="e.g., Thesis, Evidence, Style">
+      </div>
+      <div class="tag-form-group" style="max-width: 100px;">
+        <label>Color</label>
+        <input type="color" id="new-tag-color" value="#6b2d8f">
+      </div>
+      <button class="btn-primary" onclick="addNewTag()">+ Add Tag</button>
+    </div>
+
+    <div class="popup-buttons">
+      <button onclick="hideTagManager()">Done</button>
+    </div>
+  </div>
+
+  <div id="add-comment-popup" class="popup">
+    <h2>Enter Comment</h2>
+    <textarea id="comment-text" placeholder="Enter one or many paragraphs at a time."></textarea>
+    <div class="popup-buttons">
+      <button onclick="saveComment()">Save</button>
+      <button onclick="hideAddCommentPopup()">Cancel</button>
+    </div>
+  </div>
+
+  </div> <!-- End container -->
+
+  <!-- Comment Bank Container (Full Width) -->
+  <div id="comment-container" class="comment-container">
+    <!-- Sticky Header Wrapper -->
+    <div class="comment-header-wrapper">
+      <!-- Action Toolbar -->
+      <div class="comment-actions">
+        <div class="comment-actions-left">
+          <button class="btn-icon" onclick="goToHome()" title="Back to Home">← Back</button>
+          <h2 id="assignment-heading" style="margin: 0; font-size: 1.25rem;"></h2>
+        </div>
+        <div class="comment-actions-right">
+          <button class="btn-secondary" onclick="showTagManager()">🏷️ Manage Tags</button>
+          <button class="btn-secondary" onclick="copySelectedComments()">📋 Copy Selected</button>
+          <button class="btn-primary" onclick="addComment()">+ Add Comment</button>
+        </div>
+      </div>
+
+      <!-- Tag Filter Bar -->
+      <div class="tag-filter-bar" id="tag-filter-bar">
+        <span class="tag-filter-label">Filter by:</span>
+        <div class="tag-filters" id="tag-filters"></div>
+        <button class="clear-filters-btn" onclick="clearTagFilters()" id="clear-filters-btn" style="display: none;">Clear Filters</button>
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comments-list-wrapper">
+      <div id="comments-list"></div>
+    </div>
+  </div>
+
+  <!-- Global Tag Picker Dropdown (shared by all comments) -->
+  <div id="global-tag-picker" class="tag-picker-menu" style="display: none;"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
