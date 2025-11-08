@@ -1,0 +1,1097 @@
+let commentBanks = [];
+let currentCommentBankIndex = -1; // Track which comment bank is currently open
+let activeTagFilters = []; // Track which tags are being filtered
+let selectedComments = new Set(); // Track which comments are checked
+
+function uploadCommentBank() {
+  // Implement the logic to upload a comment bank
+  console.log('Upload Comment Bank');
+}
+
+function goToHome() {
+  document.getElementById('comment-container').style.display = 'none';
+  document.getElementById('landing-container').style.display = 'block';
+  document.querySelector('.container').style.display = 'block';
+  // Clear the URL hash
+  history.pushState(null, '', window.location.pathname);
+  currentCommentBankIndex = -1;
+}
+
+
+
+function deleteCommentBanks() {
+  // Show the delete popup with checkboxes for each comment bank
+  const deleteCheckboxes = document.getElementById('delete-checkboxes');
+  deleteCheckboxes.innerHTML = '';
+  commentBanks.forEach((commentBank, index) => {
+    // Skip the Sample Comment Bank - don't allow deletion
+    if (commentBank.assignmentName === "Sample Comment Bank") {
+      return;
+    }
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `comment-bank-${index}`;
+    checkbox.value = index;
+    const label = document.createElement('label');
+    label.htmlFor = `comment-bank-${index}`;
+    label.textContent = commentBank.assignmentName;
+    deleteCheckboxes.appendChild(checkbox);
+    deleteCheckboxes.appendChild(label);
+    deleteCheckboxes.appendChild(document.createElement('br'));
+  });
+  document.getElementById('delete-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function deleteComment(index) {
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
+  currentCommentBank.comments.splice(index, 1);
+
+  // Update selectedComments: remove deleted index and shift down all higher indices
+  const newSelectedComments = new Set();
+  selectedComments.forEach(selectedIndex => {
+    if (selectedIndex < index) {
+      newSelectedComments.add(selectedIndex);
+    } else if (selectedIndex > index) {
+      newSelectedComments.add(selectedIndex - 1);
+    }
+    // If selectedIndex === index, don't add it (it's been deleted)
+  });
+  selectedComments = newSelectedComments;
+
+  saveData();
+  displayComments(currentCommentBank.comments);
+}
+
+
+function confirmDeleteCommentBanks() {
+  // Show the confirmation popup for deleting selected comment banks
+  document.getElementById('delete-popup').style.display = 'none';
+  document.getElementById('confirm-delete-popup').style.display = 'block';
+}
+
+function deleteSelectedCommentBanks() {
+  // Get the selected comment banks and delete them
+  const selectedCommentBanks = Array.from(document.querySelectorAll('#delete-checkboxes input[type="checkbox"]:checked'))
+    .map(checkbox => parseInt(checkbox.value));
+  // Filter out selected banks, but never delete the Sample Comment Bank
+  commentBanks = commentBanks.filter((bank, index) => {
+    if (bank.assignmentName === "Sample Comment Bank") {
+      return true; // Always keep Sample Comment Bank
+    }
+    return !selectedCommentBanks.includes(index);
+  });
+  saveData();
+  updateCommentBankList();
+  hideConfirmDeletePopup();
+}
+
+function showPopup() {
+  document.getElementById('popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+  document.getElementById('assignment-name').focus();
+}
+
+function hidePopup() {
+  document.getElementById('popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function showClearDataPopup() {
+  document.getElementById('clear-data-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function hideClearDataPopup() {
+  document.getElementById('clear-data-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function hideDeletePopup() {
+  document.getElementById('delete-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function hideConfirmDeletePopup() {
+  document.getElementById('confirm-delete-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function hideDownloadPopup() {
+  document.getElementById('download-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function uploadCommentBank() {
+  document.getElementById('upload-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function hideUploadPopup() {
+  document.getElementById('upload-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+
+function handleEnterKey() {
+  const assignmentName = document.getElementById('assignment-name').value;
+  const newCommentBank = {
+    assignmentName: assignmentName,
+    comments: [],
+    tags: getDefaultTags() // Initialize with default tags
+  };
+  commentBanks.push(newCommentBank);
+  saveData();
+  updateCommentBankList();
+  document.getElementById('assignment-name').value = '';
+  document.getElementById('popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+  openCommentBank(commentBanks.length - 1);
+}
+
+// Default tags for new comment banks
+function getDefaultTags() {
+  return [
+    { id: generateId(), name: 'Evidence', color: '#3498DB' },
+    { id: generateId(), name: 'Organization', color: '#2ECC71' },
+    { id: generateId(), name: 'Intro', color: '#9B59B6' },
+    { id: generateId(), name: 'Conclusion', color: '#8E44AD' },
+    { id: generateId(), name: 'Voice', color: '#E74C3C' },
+    { id: generateId(), name: 'Praise', color: '#FFD700' },
+    { id: generateId(), name: 'Critical', color: '#E67E22' },
+    { id: generateId(), name: 'Salutation', color: '#1ABC9C' },
+    { id: generateId(), name: 'Valediction', color: '#16A085' },
+    { id: generateId(), name: 'Stakes', color: '#C0392B' },
+    { id: generateId(), name: 'Problem', color: '#D35400' },
+    { id: generateId(), name: 'Ethos', color: '#34495E' },
+    { id: generateId(), name: 'Sayback', color: '#27AE60' }
+  ];
+}
+
+// Generate unique IDs for tags
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+function addComment() {
+    showAddCommentPopup();
+}
+
+function editComment(button, index) {
+  const commentElement = button.closest('.comment');
+  const commentText = commentElement.querySelector('.comment-text').textContent;
+  document.getElementById('comment-text').value = commentText;
+  document.getElementById('add-comment-popup').setAttribute('data-index', index);
+  showAddCommentPopup();
+}
+
+function copyComment(button) {
+  const commentElement = button.closest('.comment');
+  const commentText = commentElement.querySelector('.comment-text').textContent;
+  navigator.clipboard.writeText(commentText.trim()).then(function() {
+    const originalText = button.innerHTML;
+    button.innerHTML = '✅ Copied!';
+    setTimeout(function() {
+      button.innerHTML = originalText;
+    }, 2000);
+  }, function(err) {
+    console.error('Could not copy text: ', err);
+  });
+}
+
+function copySelectedComments() {
+  if (currentCommentBankIndex === -1) return;
+
+  if (selectedComments.size === 0) {
+    alert('No comments selected!');
+    return;
+  }
+
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
+  const selectedTexts = Array.from(selectedComments)
+    .map(index => currentCommentBank.comments[index].text)
+    .filter(text => text); // Filter out any undefined
+
+  if (selectedTexts.length > 0) {
+    const commentsWithLineBreaks = selectedTexts.join('\n\n');
+    navigator.clipboard.writeText(commentsWithLineBreaks).then(function() {
+      alert('Selected comments copied to clipboard!');
+    }, function(err) {
+      console.error('Could not copy text: ', err);
+    });
+  } else {
+    alert('No comments selected!');
+  }
+}
+
+function saveData() {
+  localStorage.setItem('commentBankData', JSON.stringify(commentBanks));
+}
+
+function getPreloadedCommentBanks() {
+  const tags = [
+    { id: generateId(), name: 'Intro', color: '#9b59b6' },
+    { id: generateId(), name: 'Evidence', color: '#3498db' },
+    { id: generateId(), name: 'Organization', color: '#2ecc71' },
+    { id: generateId(), name: 'Voice', color: '#e74c3c' },
+    { id: generateId(), name: 'Conclusion', color: '#8e44ad' },
+    { id: generateId(), name: 'Praise', color: '#ffd700' },
+    { id: generateId(), name: 'Critical', color: '#e67e22' },
+    { id: generateId(), name: 'Salutation', color: '#1ABC9C' },
+    { id: generateId(), name: 'Valediction', color: '#16A085' }
+  ];
+
+  const sampleComments = [
+    { text: "Dear [Student Name],\n\nI enjoyed reading your essay and learning more about your thinking on this topic.", tags: [tags[7].id, tags[5].id] },
+    { text: "Thank you for sharing this draft with me. I can see you've put considerable thought into developing these ideas.", tags: [tags[7].id, tags[5].id] },
+    { text: "I'm looking forward to seeing where you take this essay in your next revision.", tags: [tags[8].id] },
+    { text: "Please feel free to stop by my office hours if you'd like to discuss any of these suggestions further.", tags: [tags[8].id] },
+    { text: "Your opening paragraph immediately drew me in as a reader. I wanted to keep reading to find out where you were going with this idea.", tags: [tags[0].id, tags[5].id] },
+    { text: "I'm intrigued by your opening, but I'm not yet sure what question or problem your essay will address. What do you want readers to understand by the end?", tags: [tags[0].id] },
+    { text: "As a reader, I found myself wanting more context in your introduction. What background information do I need to understand why this topic matters?", tags: [tags[0].id] },
+    { text: "Your introduction establishes the topic, but I'm not yet hearing your voice or perspective. What's your stake in this issue? Why does it matter to you?", tags: [tags[0].id, tags[3].id] },
+    { text: "You make an interesting claim in your opening paragraph. Can you help me understand what led you to this conclusion?", tags: [tags[0].id, tags[1].id] },
+    { text: "The specific example you provide in paragraph 3 is compelling. This kind of concrete detail helps me understand your point much more clearly.", tags: [tags[1].id, tags[5].id] },
+    { text: "I'm not quite convinced by the evidence in this section. What additional details or examples might help skeptical readers understand your perspective?", tags: [tags[1].id] },
+    { text: "When you write [quote specific phrase], I'm not sure how this supports your main argument. Can you help me see the connection?", tags: [tags[1].id] },
+    { text: "This paragraph feels like it's summarizing what others have said. What do you think about this issue? I want to hear your analysis, not just a report.", tags: [tags[1].id, tags[3].id] },
+    { text: "You mention [fact/statistic] here, but I'm wondering: where did this information come from? How do we know it's reliable?", tags: [tags[1].id] },
+    { text: "The evidence you've gathered is strong, but I'm not sure it all points in the same direction. What's the throughline connecting these examples?", tags: [tags[1].id, tags[2].id] },
+    { text: "Your structure helps me follow your thinking. Each paragraph seems to build logically on the previous one.", tags: [tags[2].id, tags[5].id] },
+    { text: "I lost track of your main argument somewhere in the middle of the essay. How do paragraphs 4-6 relate to your central claim?", tags: [tags[2].id] },
+    { text: "This paragraph introduces a new idea that seems important. Should it come earlier in the essay? How does it fit with what you've already said?", tags: [tags[2].id] },
+    { text: "I notice you're making several different arguments here. Which one is most central to your essay? Can the others support that main claim?", tags: [tags[2].id] },
+    { text: "Your transitions help me see how your ideas connect. I can follow your reasoning from one paragraph to the next.", tags: [tags[2].id, tags[5].id] },
+    { text: "I'm struck by the way you describe [specific detail]. This kind of specific, vivid writing brings your ideas to life.", tags: [tags[3].id, tags[5].id] },
+    { text: "Your voice comes through most strongly when you're describing your own experience. Can you bring that same energy to other parts of the essay?", tags: [tags[3].id] },
+    { text: "I can hear you trying to sound 'academic' here, but it makes your writing feel stiff. What if you explained this idea the way you'd tell a friend about it?", tags: [tags[3].id] },
+    { text: "When you write in the passive voice ('it was discovered that...'), your ideas lose some of their energy. Who discovered this? What did they do?", tags: [tags[3].id] },
+    { text: "This sentence is doing a lot of work. Could you break it into two or three shorter sentences to help readers follow your thinking?", tags: [tags[3].id] },
+    { text: "Your conclusion brings the essay full circle nicely. I can see how your thinking has developed from the opening to here.", tags: [tags[4].id, tags[5].id] },
+    { text: "Your conclusion summarizes what you've already said, but I'm wondering: so what? Why should readers care about this? What should we do with this information?", tags: [tags[4].id] },
+    { text: "The ending feels abrupt. I wanted to hear you reflect more on the implications of what you've argued. What's at stake here?", tags: [tags[4].id] },
+    { text: "You raise an interesting new point in your conclusion. This seems like it could be part of your main argument—should it appear earlier?", tags: [tags[4].id, tags[2].id] },
+    { text: "You've done solid work on this draft. Your ideas are interesting and your argument is starting to take shape.", tags: [tags[5].id] },
+    { text: "This draft shows real growth since your last essay. I can see you're developing more sophisticated ways of supporting your claims.", tags: [tags[5].id] },
+    { text: "You're asking important questions in this essay. I'm excited to see how you continue to develop these ideas.", tags: [tags[5].id] },
+    { text: "The way you've integrated your sources here is much smoother than in earlier drafts. Nice work.", tags: [tags[5].id, tags[1].id] },
+    { text: "I'm not sure what you're trying to say in this section. Can you clarify your main point here?", tags: [tags[6].id] },
+    { text: "This draft reads more like a collection of ideas than a unified argument. What's the central claim that holds everything together?", tags: [tags[6].id, tags[2].id] },
+    { text: "You're making claims here that need more support. What evidence would help readers understand why this is true?", tags: [tags[6].id, tags[1].id] },
+    { text: "I notice you're relying heavily on generalizations. Can you point to specific examples or moments that illustrate what you mean?", tags: [tags[6].id, tags[1].id] }
+  ];
+
+  return [{
+    assignmentName: "Sample Comment Bank",
+    tags: tags,
+    comments: sampleComments
+  }];
+}
+
+function loadData() {
+  const data = JSON.parse(localStorage.getItem('commentBankData'));
+  if (data) {
+    commentBanks = data;
+    // Ensure backwards compatibility - add tags to old comment banks
+    commentBanks.forEach(bank => {
+      if (!bank.tags) {
+        bank.tags = getDefaultTags();
+      }
+      // Migrate old color-based tags to new system
+      if (bank.comments) {
+        bank.comments.forEach(comment => {
+          if (!comment.tags && comment.color) {
+            comment.tags = [];
+            // Don't auto-migrate colors to maintain data integrity
+          }
+          if (!comment.tags) {
+            comment.tags = [];
+          }
+        });
+      }
+    });
+  } else {
+    // Initialize with empty array
+    commentBanks = [];
+  }
+
+  // Always ensure Sample Comment Bank exists
+  const hasSampleBank = commentBanks.some(bank => bank.assignmentName === "Sample Comment Bank");
+  if (!hasSampleBank) {
+    // Add Sample Comment Bank at the beginning
+    const sampleBank = getPreloadedCommentBanks()[0];
+    commentBanks.unshift(sampleBank);
+  }
+
+  saveData(); // Save any changes
+  updateCommentBankList();
+
+  // Check if there's a hash in the URL and open the corresponding bank
+  loadCommentBankFromURL();
+}
+
+// Load comment bank based on URL hash
+function loadCommentBankFromURL() {
+  const hash = window.location.hash.substring(1); // Remove the '#'
+  if (hash) {
+    // Find the comment bank with matching slug
+    const index = commentBanks.findIndex(bank => slugify(bank.assignmentName) === hash);
+    if (index !== -1) {
+      // Don't update history when loading from URL on page load
+      openCommentBank(index, false);
+    }
+  }
+}
+
+document.getElementById('assignment-name').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    handleEnterKey();
+  }
+});
+
+function updateCommentBankList() {
+  const commentBankList = document.getElementById('comment-bank-list');
+  const noCommentBanksMessage = document.getElementById('no-comment-banks-message');
+  commentBankList.innerHTML = `
+    <div class="add-comment-bank">
+      <button class="add-button" onclick="showPopup()">+ Add Comment Bank</button>
+    </div>
+  `;
+  if (commentBanks.length === 0) {
+    noCommentBanksMessage.style.display = 'block';
+  } else {
+    noCommentBanksMessage.style.display = 'none';
+    commentBanks.forEach((commentBank, index) => {
+      const commentBankLink = document.createElement('p');
+      commentBankLink.className = 'comment-bank-link';
+      commentBankLink.textContent = commentBank.assignmentName;
+      commentBankLink.addEventListener('click', () => openCommentBank(index));
+      commentBankList.appendChild(commentBankLink);
+    });
+  }
+}
+
+// Convert comment bank name to URL-friendly slug
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')      // Replace spaces with hyphens
+    .replace(/--+/g, '-')      // Replace multiple hyphens with single hyphen
+    .trim();
+}
+
+function openCommentBank(index, updateHistory = true) {
+  currentCommentBankIndex = index; // Set the current comment bank
+  activeTagFilters = []; // Reset filters when opening a comment bank
+  selectedComments.clear(); // Clear selected comments when switching banks
+  const commentBank = commentBanks[index];
+  document.getElementById('assignment-heading').textContent = commentBank.assignmentName;
+  displayTagFilterBar();
+  displayComments(commentBank.comments);
+  document.getElementById('landing-container').style.display = 'none';
+  document.querySelector('.container').style.display = 'none';
+  document.getElementById('comment-container').style.display = 'block';
+  window.scrollTo(0, 0); // Scroll to top to show comment bank immediately below header
+
+  // Update URL with comment bank name (only if updateHistory is true)
+  if (updateHistory) {
+    const slug = slugify(commentBank.assignmentName);
+    history.pushState({ commentBankIndex: index }, '', '#' + slug);
+  }
+}
+
+// Display Tag Filter Bar
+function displayTagFilterBar() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagFiltersContainer = document.getElementById('tag-filters');
+
+  if (!commentBank.tags) {
+    commentBank.tags = getDefaultTags();
+  }
+
+  if (commentBank.tags.length === 0) {
+    tagFiltersContainer.innerHTML = '<span style="color: var(--text-tertiary); font-size: 0.85rem;">No tags available</span>';
+    return;
+  }
+
+  tagFiltersContainer.innerHTML = commentBank.tags.map(tag => `
+    <span class="tag-filter"
+          data-tag-id="${tag.id}"
+          style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};"
+          onclick="toggleTagFilter('${tag.id}')">
+      ${tag.name}
+    </span>
+  `).join('');
+
+  updateFilterCount();
+}
+
+// Toggle Tag Filter
+function toggleTagFilter(tagId) {
+  const index = activeTagFilters.indexOf(tagId);
+  if (index > -1) {
+    activeTagFilters.splice(index, 1);
+  } else {
+    activeTagFilters.push(tagId);
+  }
+
+  // Update visual state
+  const filterElement = document.querySelector(`.tag-filter[data-tag-id="${tagId}"]`);
+  if (filterElement) {
+    filterElement.classList.toggle('active');
+  }
+
+  // Show/hide clear button
+  const clearBtn = document.getElementById('clear-filters-btn');
+  clearBtn.style.display = activeTagFilters.length > 0 ? 'block' : 'none';
+
+  updateFilterCount();
+  displayComments(commentBanks[currentCommentBankIndex].comments);
+}
+
+// Clear All Filters
+function clearTagFilters() {
+  activeTagFilters = [];
+
+  // Remove active class from all filters
+  document.querySelectorAll('.tag-filter.active').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  // Hide clear button
+  document.getElementById('clear-filters-btn').style.display = 'none';
+
+  updateFilterCount();
+  displayComments(commentBanks[currentCommentBankIndex].comments);
+}
+
+// Update Filter Count Display
+function updateFilterCount() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const filterCountEl = document.getElementById('filter-count');
+
+  if (activeTagFilters.length === 0) {
+    filterCountEl.textContent = `Showing all ${commentBank.comments.length} comments`;
+  } else {
+    const filteredCount = commentBank.comments.filter(comment => {
+      return comment.tags && comment.tags.some(tagId => activeTagFilters.includes(tagId));
+    }).length;
+    filterCountEl.textContent = `Showing ${filteredCount} of ${commentBank.comments.length} comments`;
+  }
+}
+
+function displayComments(comments) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const commentsList = document.getElementById('comments-list');
+  commentsList.innerHTML = '';
+
+  // Ensure tags exist
+  if (!commentBank.tags) {
+    commentBank.tags = getDefaultTags();
+  }
+
+  // Show empty state if no comments
+  if (comments.length === 0) {
+    commentsList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <h3>No comments yet</h3>
+        <p>Click the "+ Add Comment" button above to create your first comment</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Sort comments: filtered ones first if filters are active
+  let sortedComments = comments.map((comment, originalIndex) => ({ comment, originalIndex }));
+
+  if (activeTagFilters.length > 0) {
+    sortedComments = sortedComments.sort((a, b) => {
+      const aHasTag = a.comment.tags && a.comment.tags.some(tagId => activeTagFilters.includes(tagId));
+      const bHasTag = b.comment.tags && b.comment.tags.some(tagId => activeTagFilters.includes(tagId));
+
+      if (aHasTag && !bHasTag) return -1;
+      if (!aHasTag && bHasTag) return 1;
+      return 0;
+    });
+  }
+
+  sortedComments.forEach(({ comment, originalIndex: index }) => {
+    // Check if comment matches any active filters
+    const matchesFilter = activeTagFilters.length === 0 ||
+      (comment.tags && comment.tags.some(tagId => activeTagFilters.includes(tagId)));
+    const commentElement = document.createElement('div');
+    commentElement.className = 'comment';
+
+    // Add visual feedback for filtered state
+    if (activeTagFilters.length > 0 && !matchesFilter) {
+      commentElement.style.opacity = '0.4';
+    }
+
+    // Ensure comment has tags array
+    if (!comment.tags) {
+      comment.tags = [];
+    }
+
+    // Get comment's tags
+    const commentTags = comment.tags.map(tagId => {
+      return commentBank.tags.find(t => t.id === tagId);
+    }).filter(t => t); // Remove undefined tags
+
+    // Set accent color (use first tag color or default)
+    const accentColor = commentTags.length > 0 ? commentTags[0].color : '#888';
+    commentElement.style.setProperty('--comment-accent-color', accentColor);
+
+    // Build tags HTML
+    const tagsHTML = commentTags.length > 0
+      ? commentTags.map(tag => `
+          <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+            ${tag.name}
+          </span>
+        `).join('')
+      : '<span class="tag" style="background-color: #f5f5f5; color: #999; border-color: #ddd;">No tags</span>';
+
+    commentElement.innerHTML = `
+      <!-- Comment Header -->
+      <div class="comment-header">
+        <input type="checkbox" class="comment-checkbox" data-comment-index="${index}" ${selectedComments.has(index) ? 'checked' : ''}>
+        <div class="tags-container">
+          ${tagsHTML}
+        </div>
+        <div style="flex: 1"></div>
+        <div class="reorder-buttons">
+          <button class="reorder-btn" onclick="moveCommentUp(${index})" ${index === 0 ? 'disabled' : ''} title="Move up">∧</button>
+          <button class="reorder-btn" onclick="moveCommentDown(${index})" ${index === comments.length - 1 ? 'disabled' : ''} title="Move down">∨</button>
+        </div>
+      </div>
+
+      <!-- Comment Body -->
+      <div class="comment-body">
+        <div class="comment-text">${comment.text}</div>
+      </div>
+
+      <!-- Comment Footer -->
+      <div class="comment-footer">
+        <div class="comment-actions-inline">
+          <button onclick="editComment(this, ${index})">✏️ Edit</button>
+          <button class="copy-button" onclick="copyComment(this)">📋 Copy</button>
+          <button onclick="deleteComment(${index})" style="color: #dc3545;">🗑️ Delete</button>
+        </div>
+
+        <button class="tag-picker-toggle" data-comment-index="${index}">🏷️ Tags</button>
+      </div>
+    `;
+    commentsList.appendChild(commentElement);
+
+    // Add event listener to checkbox to track selection
+    const checkbox = commentElement.querySelector('.comment-checkbox');
+    checkbox.addEventListener('change', function() {
+      const idx = parseInt(this.getAttribute('data-comment-index'));
+      if (this.checked) {
+        selectedComments.add(idx);
+      } else {
+        selectedComments.delete(idx);
+      }
+    });
+  });
+
+  // Set up global tag picker event listeners
+  setupGlobalTagPicker();
+}
+
+function buildTagPickerOptions(availableTags, selectedTagIds, commentIndex) {
+  if (!availableTags || availableTags.length === 0) {
+    return '<p style="padding: var(--space-md); text-align: center; color: var(--text-tertiary);">No tags available. Click "Manage Tags" to create some!</p>';
+  }
+
+  return availableTags.map(tag => {
+    const isSelected = selectedTagIds.includes(tag.id);
+    return `
+      <div class="tag-option ${isSelected ? 'selected' : ''}" data-tag-id="${tag.id}" data-comment-index="${commentIndex}">
+        <input type="checkbox" class="tag-option-checkbox" ${isSelected ? 'checked' : ''}>
+        <span class="tag-swatch" style="background-color: ${tag.color};"></span>
+        <span class="tag-option-name">${tag.name}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Setup global tag picker dropdown
+let globalTagPickerActive = false;
+let globalListenersInitialized = false;
+
+function setupGlobalTagPicker() {
+  const globalPicker = document.getElementById('global-tag-picker');
+  const toggleButtons = document.querySelectorAll('.tag-picker-toggle');
+
+  // Remove old listeners by cloning (simple way to remove all event listeners)
+  const newGlobalPicker = globalPicker.cloneNode(true);
+  globalPicker.parentNode.replaceChild(newGlobalPicker, globalPicker);
+
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const commentIndex = parseInt(this.getAttribute('data-comment-index'));
+      openGlobalTagPicker(this, commentIndex);
+    });
+  });
+
+  // Only initialize document-level listeners once
+  if (!globalListenersInitialized) {
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#global-tag-picker') && !e.target.closest('.tag-picker-toggle')) {
+        closeGlobalTagPicker();
+      }
+    });
+
+    // Close when scrolling (since position becomes misaligned)
+    window.addEventListener('scroll', function() {
+      if (globalTagPickerActive) {
+        closeGlobalTagPicker();
+      }
+    });
+
+    globalListenersInitialized = true;
+  }
+}
+
+function openGlobalTagPicker(button, commentIndex) {
+  if (currentCommentBankIndex === -1) return;
+
+  const globalPicker = document.getElementById('global-tag-picker');
+
+  // If clicking the same button that's already open, close it
+  const currentCommentIndex = globalPicker.getAttribute('data-current-comment');
+  if (globalTagPickerActive && currentCommentIndex == commentIndex) {
+    closeGlobalTagPicker();
+    return;
+  }
+
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const comment = commentBank.comments[commentIndex];
+
+  // Store which comment this picker is for
+  globalPicker.setAttribute('data-current-comment', commentIndex);
+
+  // Build tag options HTML
+  globalPicker.innerHTML = buildTagPickerOptions(commentBank.tags, comment.tags, commentIndex);
+
+  // Position the dropdown - account for scroll position
+  const buttonRect = button.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+  const pickerHeight = 320; // Max height
+  const spaceBelow = window.innerHeight - buttonRect.bottom;
+  const spaceAbove = buttonRect.top;
+
+  // Position it aligned with the button (accounting for scroll)
+  globalPicker.style.left = (buttonRect.left + scrollLeft) + 'px';
+
+  // Position above or below based on available space
+  if (spaceBelow > pickerHeight || spaceBelow > spaceAbove) {
+    // Open below
+    globalPicker.style.top = (buttonRect.bottom + scrollTop + 4) + 'px';
+    globalPicker.style.bottom = 'auto';
+  } else {
+    // Open above
+    globalPicker.style.top = (buttonRect.top + scrollTop - pickerHeight - 4) + 'px';
+    globalPicker.style.bottom = 'auto';
+  }
+
+  // Show the dropdown
+  globalPicker.style.display = 'block';
+  globalTagPickerActive = true;
+
+  // Setup listeners for tag options
+  const tagOptions = globalPicker.querySelectorAll('.tag-option');
+  tagOptions.forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const checkbox = this.querySelector('.tag-option-checkbox');
+      const tagId = this.getAttribute('data-tag-id');
+      const index = parseInt(this.getAttribute('data-comment-index'));
+
+      checkbox.checked = !checkbox.checked;
+      toggleCommentTag(index, tagId);
+      this.classList.toggle('selected');
+    });
+
+    // Prevent checkbox click from double-toggling
+    const checkbox = option.querySelector('.tag-option-checkbox');
+    checkbox.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+}
+
+function closeGlobalTagPicker() {
+  const globalPicker = document.getElementById('global-tag-picker');
+  globalPicker.style.display = 'none';
+  globalPicker.removeAttribute('data-current-comment');
+  globalTagPickerActive = false;
+}
+
+function toggleCommentTag(commentIndex, tagId) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const comment = commentBank.comments[commentIndex];
+
+  if (!comment.tags) {
+    comment.tags = [];
+  }
+
+  const tagIndex = comment.tags.indexOf(tagId);
+  if (tagIndex > -1) {
+    comment.tags.splice(tagIndex, 1);
+  } else {
+    comment.tags.push(tagId);
+  }
+
+  saveData();
+  // Update just the tags display without re-rendering entire list
+  const commentElement = document.querySelectorAll('.comment')[commentIndex];
+  const tagsContainer = commentElement.querySelector('.tags-container');
+
+  const commentTags = comment.tags.map(tid => {
+    return commentBank.tags.find(t => t.id === tid);
+  }).filter(t => t);
+
+  const tagsHTML = commentTags.length > 0
+    ? commentTags.map(tag => `
+        <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+          ${tag.name}
+        </span>
+      `).join('')
+    : '<span class="tag" style="background-color: #f5f5f5; color: #999; border-color: #ddd;">No tags</span>';
+
+  tagsContainer.innerHTML = tagsHTML;
+
+  // Update accent color
+  const accentColor = commentTags.length > 0 ? commentTags[0].color : '#888';
+  commentElement.style.setProperty('--comment-accent-color', accentColor);
+}
+
+// Legacy functions removed - now using tag system
+
+function clearData() {
+  localStorage.removeItem('commentBankData');
+  // Reset to just the Sample Comment Bank
+  commentBanks = getPreloadedCommentBanks();
+  saveData();
+  updateCommentBankList();
+  hideClearDataPopup();
+}
+
+function downloadCommentBank() {
+  // Show the download popup with radio buttons for each comment bank
+  const downloadOptions = document.getElementById('download-options');
+  downloadOptions.innerHTML = '';
+  commentBanks.forEach((commentBank, index) => {
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.id = `comment-bank-${index}`;
+    radio.name = 'comment-bank';
+    radio.value = index;
+    const label = document.createElement('label');
+    label.htmlFor = `comment-bank-${index}`;
+    label.textContent = commentBank.assignmentName;
+    const option = document.createElement('div');
+    option.className = 'download-option';
+    option.appendChild(radio);
+    option.appendChild(label);
+    downloadOptions.appendChild(option);
+  });
+  document.getElementById('download-popup').style.display = 'block';
+  document.getElementById('download-popup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+
+  console.log('Download Comment Bank');
+
+}
+
+
+function downloadSelectedCommentBank() {
+  // Get the selected comment bank and initiate the download
+  const selectedCommentBankIndex = document.querySelector('input[name="comment-bank"]:checked').value;
+  const selectedCommentBank = commentBanks[selectedCommentBankIndex];
+  const commentBankData = JSON.stringify(selectedCommentBank, null, 2);
+  const blob = new Blob([commentBankData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${selectedCommentBank.assignmentName}.bank`;
+  link.click();
+  hideDownloadPopup();
+}
+
+
+
+function hideUploadPopup() {
+  document.getElementById('upload-popup').style.display = 'none';
+  document.getElementById('upload-input').value = '';
+}
+
+function hideAllPopups() {
+  document.getElementById('popup').style.display = 'none';
+  document.getElementById('clear-data-popup').style.display = 'none';
+  document.getElementById('delete-popup').style.display = 'none';
+  document.getElementById('confirm-delete-popup').style.display = 'none';
+  document.getElementById('download-popup').style.display = 'none';
+  document.getElementById('upload-popup').style.display = 'none';
+  document.getElementById('add-comment-popup').style.display = 'none';
+  document.getElementById('tag-manager-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+
+  // Close options dropdown if open
+  const dropdown = document.getElementById('optionsDropdownMenu');
+  if (dropdown && dropdown.classList.contains('show')) {
+    dropdown.classList.remove('show');
+  }
+}
+
+function showAddCommentPopup() {
+  document.getElementById('add-comment-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+  document.getElementById('comment-text').focus();
+}
+
+function hideAddCommentPopup() {
+  document.getElementById('add-comment-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+// Tag Management Functions
+function showTagManager() {
+  displayTagList();
+  document.getElementById('tag-manager-popup').style.display = 'block';
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function hideTagManager() {
+  document.getElementById('tag-manager-popup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+function displayTagList() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagList = document.getElementById('tag-list');
+
+  if (!commentBank.tags || commentBank.tags.length === 0) {
+    tagList.innerHTML = '<p style="text-align: center; color: var(--text-tertiary); padding: var(--space-xl);">No tags yet. Create your first tag below!</p>';
+    return;
+  }
+
+  tagList.innerHTML = commentBank.tags.map(tag => `
+    <div class="tag-list-item">
+      <span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border-color: ${tag.color};">
+        ${tag.name}
+      </span>
+      <div class="tag-list-actions">
+        <button onclick="deleteTag('${tag.id}')" style="background: #dc3545; color: white;">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addNewTag() {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+  const tagName = document.getElementById('new-tag-name').value.trim();
+  const tagColor = document.getElementById('new-tag-color').value;
+
+  if (!tagName) {
+    alert('Please enter a tag name');
+    return;
+  }
+
+  if (!commentBank.tags) {
+    commentBank.tags = [];
+  }
+
+  commentBank.tags.push({
+    id: generateId(),
+    name: tagName,
+    color: tagColor
+  });
+
+  saveData();
+  displayTagList();
+  displayTagFilterBar(); // Update the filter bar with the new tag
+  document.getElementById('new-tag-name').value = '';
+  document.getElementById('new-tag-color').value = '#6b2d8f';
+}
+
+function deleteTag(tagId) {
+  if (currentCommentBankIndex === -1) return;
+  const commentBank = commentBanks[currentCommentBankIndex];
+
+  if (!confirm('Delete this tag? It will be removed from all comments.')) {
+    return;
+  }
+
+  // Remove tag from all comments
+  commentBank.comments.forEach(comment => {
+    if (comment.tags) {
+      comment.tags = comment.tags.filter(id => id !== tagId);
+    }
+  });
+
+  // Remove tag from comment bank
+  commentBank.tags = commentBank.tags.filter(tag => tag.id !== tagId);
+
+  // Remove from active filters if it was active
+  activeTagFilters = activeTagFilters.filter(id => id !== tagId);
+
+  saveData();
+  displayTagList();
+  displayTagFilterBar(); // Update the filter bar
+  displayComments(commentBank.comments);
+}
+
+function uploadSelectedCommentBank() {
+  // Get the selected file and upload the comment bank
+  const uploadInput = document.getElementById('upload-input');
+  const file = uploadInput.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const commentBankData = JSON.parse(e.target.result);
+      commentBanks.push(commentBankData);
+      saveData();
+      updateCommentBankList();
+      hideUploadPopup();
+    };
+    reader.readAsText(file);
+  }
+}
+
+function saveComment() {
+  const commentText = document.getElementById('comment-text').value;
+  const commentIndex = document.getElementById('add-comment-popup').getAttribute('data-index');
+  if (commentText) {
+    if (currentCommentBankIndex === -1) return;
+    const currentCommentBank = commentBanks[currentCommentBankIndex];
+    if (commentIndex) {
+      currentCommentBank.comments[commentIndex].text = commentText;
+    } else {
+      const paragraphs = commentText.split('\n').filter(paragraph => paragraph.trim() !== '');
+      paragraphs.forEach(paragraph => {
+        currentCommentBank.comments.push({ text: paragraph, color: 'white' });
+      });
+    }
+    saveData();
+    displayComments(currentCommentBank.comments);
+    hideAddCommentPopup();
+    document.getElementById('comment-text').value = '';
+    document.getElementById('add-comment-popup').removeAttribute('data-index');
+  }
+}
+
+function moveCommentUp(index) {
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
+  if (index > 0) {
+    const temp = currentCommentBank.comments[index];
+    currentCommentBank.comments[index] = currentCommentBank.comments[index - 1];
+    currentCommentBank.comments[index - 1] = temp;
+
+    // Update selectedComments: swap the indices if either is selected
+    const wasCurrentSelected = selectedComments.has(index);
+    const wasPreviousSelected = selectedComments.has(index - 1);
+
+    if (wasCurrentSelected) {
+      selectedComments.delete(index);
+      selectedComments.add(index - 1);
+    }
+    if (wasPreviousSelected) {
+      selectedComments.delete(index - 1);
+      selectedComments.add(index);
+    }
+
+    saveData();
+    displayComments(currentCommentBank.comments);
+  }
+}
+
+function moveCommentDown(index) {
+  if (currentCommentBankIndex === -1) return;
+  const currentCommentBank = commentBanks[currentCommentBankIndex];
+  if (index < currentCommentBank.comments.length - 1) {
+    const temp = currentCommentBank.comments[index];
+    currentCommentBank.comments[index] = currentCommentBank.comments[index + 1];
+    currentCommentBank.comments[index + 1] = temp;
+
+    // Update selectedComments: swap the indices if either is selected
+    const wasCurrentSelected = selectedComments.has(index);
+    const wasNextSelected = selectedComments.has(index + 1);
+
+    if (wasCurrentSelected) {
+      selectedComments.delete(index);
+      selectedComments.add(index + 1);
+    }
+    if (wasNextSelected) {
+      selectedComments.delete(index + 1);
+      selectedComments.add(index);
+    }
+
+    saveData();
+    displayComments(currentCommentBank.comments);
+  }
+}
+
+setInterval(saveData, 3000);
+window.addEventListener('load', loadData);
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', function(event) {
+  const hash = window.location.hash.substring(1);
+  if (hash) {
+    // Find and open the comment bank (without updating history again)
+    const index = commentBanks.findIndex(bank => slugify(bank.assignmentName) === hash);
+    if (index !== -1 && index !== currentCommentBankIndex) {
+      openCommentBank(index, false);
+    }
+  } else {
+    // No hash means we should go home
+    if (currentCommentBankIndex !== -1) {
+      document.getElementById('comment-container').style.display = 'none';
+      document.getElementById('landing-container').style.display = 'block';
+      document.querySelector('.container').style.display = 'block';
+      currentCommentBankIndex = -1;
+    }
+  }
+});
+
+// Options Dropdown Toggle
+function toggleOptionsDropdown() {
+  const dropdown = document.getElementById('optionsDropdownMenu');
+  dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+window.addEventListener('click', function(event) {
+  if (!event.target.matches('.about-btn') && !event.target.matches('#optionsDropdownBtn')) {
+    const dropdowns = document.getElementsByClassName('options-dropdown-menu');
+    for (let i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+});
+
+// Show About function
+function showAbout() {
+  alert('Say More Here - Writing Teachers Comment Bank\n\nA tool for educators to manage and organize writing feedback comments.\n\nVersion 1.0');
+  toggleOptionsDropdown();
+}
